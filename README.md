@@ -9,3 +9,9 @@ Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
 Circuitpython 10.x libraries: https://circuitpython.org/libraries
+
+![ScreenShot](watch.jpg)
+
+![ScreenShot](metronome.jpg)
+
+![ScreenShot](tuner.jpg)
