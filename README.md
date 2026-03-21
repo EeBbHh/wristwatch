@@ -15,3 +15,5 @@ Circuitpython 10.x libraries: https://circuitpython.org/libraries
 ![ScreenShot](metronome.jpg)
 
 ![ScreenShot](tuner.jpg)
+
+![Project Demo](working example.mp4)
