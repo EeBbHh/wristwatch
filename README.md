@@ -1,5 +1,4 @@
-# wristwatch
-wrist watch prototype
+Dev Enviornment: Mu
 
 Circuitpython 10.x libraries: https://circuitpython.org/libraries
 
