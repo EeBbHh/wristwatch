@@ -16,4 +16,4 @@ Circuitpython 10.x libraries: https://circuitpython.org/libraries
 
 ![ScreenShot](tuner.jpg)
 
-![Watch the video](https://github.com/EeBbHh/wristwatch/blob/main/working%20example.mp4)
+![Watch the video](https://github.com/EeBbHh/wristwatch/blob/main/watch.jpg)(https://github.com/EeBbHh/wristwatch/blob/main/working%20example.mp4)
