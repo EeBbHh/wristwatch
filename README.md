@@ -1,4 +1,4 @@
-Disclaimer. This is a work in progress. What you see here are working examples and open source. There is more work I have offline that will be pushed here when it's ready.
+Disclaimer. This is a work in progress. Open source proof of concept provided.
 
 A Clock + Metronome + Tuner wristwatch. The clock draws hands directly onto a shared bitmap, the metronome animates pre-computed note sprites and the tuner renders a vector tuning fork. 
 
