@@ -1,3 +1,5 @@
+A Clock + Metronome + Tuner wristwatch built on the Adafruit QT Py RP2040 with a 1.28" round colour display, running CircuitPython. The clock draws hands directly onto a shared bitmap, the metronome animates pre-computed note sprites through a colour-coded brightness fade, and the tuner renders a vector tuning fork with no bitmap required. A small BAT label tracks battery level across all three modes, with backlight dimming after 60 minutes of inactivity and a flashing indicator when charging.
+
 Dev Enviornment: Mu https://codewith.mu/en/
 
 Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
