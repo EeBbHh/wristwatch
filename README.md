@@ -1,6 +1,6 @@
 Disclaimer. This is a work in progress. Open source proof of concept provided.
 
-A Clock + Metronome + Tuner wristwatch. The clock draws hands directly onto a shared bitmap, the metronome animates pre-computed note sprites and the tuner renders a vector tuning fork. 
+Clock + Metronome + Tuner wristwatch. The clock draws hands directly onto a shared bitmap, the metronome animates pre-computed note sprites and the tuner renders a vector tuning fork. 
 
 Dev Enviornment: Mu https://codewith.mu/en/
 
