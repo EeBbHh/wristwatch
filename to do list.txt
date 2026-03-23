@@ -1,0 +1,23 @@
+vibration mobtor
+	stubs created
+	needs soldering
+piezo buzzer
+	stubs created
+	needs soldering
+screen dimming
+	stubs created
+	needs soldering
+power(lipo BFF + battery)
+	stubs created
+	need to repurpose old one or buy new one
+	needs to fit in existing stack or replace IoT button BFF
+replace boot button and IoT button BFF with two switch buttons
+	two slim tactie switch buttons would be ideal
+	need to buy some
+	need to solder	
+
+maybe replace RP2040 with the ESP32S3withPSRAM
+maybe connect STEMMAQT RTC breakout for fun
+maybe connect STEMMAQT haptic motor breakout for fun
+
+revisit string tunings feature
