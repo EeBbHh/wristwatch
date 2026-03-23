@@ -1,4 +1,4 @@
-vibration mobtor
+vibration motor
 	stubs created
 	needs soldering
 piezo buzzer
