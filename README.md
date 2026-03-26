@@ -27,3 +27,7 @@ Vibration circuit layout. A transistor and resistor are used to make it possible
 Component list: 100Ω resistor, diode(1N4007) and transistor(2N2222)
 
 ![ScreenShot](vibcircuit.jpg)
+
+Soldered vibration circuit.
+
+![ScreenShot](vibcirsold.jpg)
