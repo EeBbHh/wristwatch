@@ -31,3 +31,5 @@ Component list: 100Ω resistor, diode(1N4007) and transistor(2N2222)
 Soldered vibration circuit.
 
 ![ScreenShot](vibcirsold.jpg)
+
+https://github.com/user-attachments/assets/251007c2-51d0-4cb1-a640-a6a2e7cbdc7a
