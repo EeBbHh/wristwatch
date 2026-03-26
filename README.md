@@ -24,6 +24,6 @@ https://github.com/user-attachments/assets/00a04122-98c7-4e2a-a195-a43d13c6c467
 
 Vibration circuit layout. A transistor and resistor are used to make it possible for the QTpY to control the motor with 3 volts. A diode is used as a flyback for when the motor stops running. The transistor connects to the black wire, the resistor and the diode. The black wire goes from the emitter lead of the transistor to ground. The resistor(100ohm) connects the base lead of the transistor to A1. The anode portion of the diode connects to the collector lead of the transistor. The cathode porton of the diode connects to the red wire. The red wire connects to 3.3 volts. The driver motor connects to each side of the diode. Blue to anode and red to cathode. 
 
-Component list: 100Ω resistor, diode(1N4007), transistor(2N2222)
+Component list: 100Ω resistor, diode(1N4007) and transistor(2N2222)
 
 ![ScreenShot](vibcircuit.jpg)
