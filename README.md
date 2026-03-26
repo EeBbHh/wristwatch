@@ -21,3 +21,7 @@ Circuitpython 10.x libraries: https://circuitpython.org/libraries
 ![ScreenShot](tuner.jpg)
 
 https://github.com/user-attachments/assets/00a04122-98c7-4e2a-a195-a43d13c6c467
+
+Vibration circuit layout.
+
+![ScreenShot](vibcircuit.jpg)
