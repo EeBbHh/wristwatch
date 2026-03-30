@@ -1,9 +1,5 @@
-vibration motor
-	stubs created
-	needs soldering
-piezo buzzer
-	stubs created
-	needs soldering
+vibration motor complete
+piezo buzzer complete
 screen dimming
 	stubs created
 	needs soldering
@@ -15,6 +11,8 @@ replace boot button and IoT button BFF with two switch buttons
 	two slim tactie switch buttons would be ideal
 	need to buy some
 	need to solder	
+
+maybe use neopixel to flash with metronome
 
 maybe replace RP2040 with the ESP32S3withPSRAM
 maybe connect STEMMAQT RTC breakout for fun
