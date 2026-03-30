@@ -3,8 +3,8 @@
 # Both held 0.5s: Clock->Metro->Tuner->Clock
 # Clock: BOOT=enter/next field  A2=increment
 # Metro: A2 short=BPM+  A2 long=timesig  BOOT short=BPM-  BOOT long=sound/silent
-# Tuner: BOOT=mute toggle
-import board,busio,displayio,fourwire,adafruit_gc9a01a
+# Tuner: A2=cycle string (E A D G B, LIVE only)  BOOT=toggle LIVE/MUTE
+import board,busio,displayio,fourwire,adafruit_gc9a01a,pwmio
 import vectorio,bitmaptools,terminalio,digitalio,rtc
 import time,math,gc
 from adafruit_display_text.bitmap_label import Label
@@ -23,6 +23,9 @@ btn_boot.pull=digitalio.Pull.UP
 motor=digitalio.DigitalInOut(board.A1)
 motor.direction=digitalio.Direction.OUTPUT
 motor.value=False
+buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
+buzzer.frequency=440
+BUZZER_DUTY=32768
 BOTH_HOLD_S=0.5
 CX,CY=120,120
 WIDTH,HEIGHT=240,240
@@ -178,7 +181,6 @@ SPRITE["eighth"]=merge(head_e,stem_e,flag_e);del head_e,stem_e,flag_e;gc.collect
 head_e1=filled_ellipse(CX-22,CY+15,13,9,-20);stem_e1=thick_vline(CX-11,CY+7,CY-22,4)
 head_e2=filled_ellipse(CX+12,CY+5,13,9,-20);stem_e2=thick_vline(CX+23,CY-3,CY-22,4);beam=filled_rect(CX-11,CY-26,35,7)
 SPRITE["double_eighth"]=merge(head_e1,stem_e1,head_e2,stem_e2,beam);del head_e1,stem_e1,head_e2,stem_e2,beam;gc.collect()
-gc.collect()
 def apply_bpm(bpm):
     colour,note=bpm_range(bpm);cycle=60.0/bpm;fsteps=max(1,int(cycle/REFRESH_FLOOR))
     build_metro_palette(colour,fsteps)
@@ -205,11 +207,18 @@ def _build_tuner_group():
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX+4,y=tt,width=4,height=bt-tt))
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-8,y=bt,width=16,height=bh))
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-3,y=ht,width=6,height=hb-ht))
-    ln=Label(terminalio.FONT,text="A4 440 Hz",color=COLOR_PINK_PURPLE,scale=2)
-    ln.anchor_point=(0.5,0.5);ln.anchored_position=(CX,55);g.append(ln)
+    global lbl_note
+    lbl_note=Label(terminalio.FONT,text="E2  82 Hz",color=COLOR_PINK_PURPLE,scale=2)
+    lbl_note.anchor_point=(0.5,0.5);lbl_note.anchored_position=(CX,55);g.append(lbl_note)
     return g
 tuner_group=_build_tuner_group();del _build_tuner_group;gc.collect()
 tuner_muted=False
+TUNER_STRINGS=(("E2",82),("A2",110),("D3",147),("G3",196),("B3",247))
+tuner_str_idx=0
+TUNER_FREQ=TUNER_STRINGS[0][1]
+TUNER_ON_S=4.0   # tone on duration
+TUNER_OFF_S=2.0  # silence between pulses
+tuner_tone_on=False;tuner_next_t=0.0
 lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,192))
 tuner_group.append(lbl_tuner_mute);gc.collect()
 def both_held():return(not btn_a2.value)and(not btn_boot.value)
@@ -225,16 +234,20 @@ def wait_release(btn):
     while not btn.value:time.sleep(0.05)
 def vibrate(ms):
     motor.value=True;time.sleep(ms/1000);motor.value=False
+def tone(freq,ms):
+    buzzer.frequency=freq;buzzer.duty_cycle=BUZZER_DUTY
+    time.sleep(ms/1000);buzzer.duty_cycle=0
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
 def enter_clock():
+    global tuner_tone_on;buzzer.duty_cycle=0;tuner_tone_on=False
     t=time.localtime();redraw_hands(t.tm_hour,t.tm_min,t.tm_sec)
     display.root_group=clock_group;display.refresh()
 def enter_metro():
+    global tuner_tone_on;buzzer.duty_cycle=0;tuner_tone_on=False
     shared_bitmap.fill(0);display.root_group=metro_group;display.refresh()
 def enter_tuner():
     display.root_group=tuner_group;display.refresh()
-    # TODO: start A440 tone; respect tuner_muted
 def advance_mode():
     global mode,beat_start,last_beat_t,beat_count,step,btn_a2_prev,btn_boot_prev,metro_beat_pos
     mode=(mode+1)%NUM_MODES
@@ -338,7 +351,7 @@ while True:
             step=FADE_STEPS;beat_start+=cycle_s;beat_count+=1
             is_downbeat=(metro_beat_pos==0)
             if not metro_silent:
-                pass  # TODO: trigger click (louder if is_downbeat)
+                tone(880 if is_downbeat else 660,60)
             else:
                 vibrate(80 if is_downbeat else 50)
             metro_beat_pos=(metro_beat_pos+1)%TIME_SIG_BEATS[metro_ts_idx]
@@ -348,6 +361,31 @@ while True:
                 print("BPM="+str(BPM)+" drift="+str(error_ms)+"ms")
                 gc.collect()
     elif mode==MODE_TUNER:
+        now=time.monotonic()
+        if not tuner_muted:
+            if now>=tuner_next_t:
+                if tuner_tone_on:
+                    buzzer.duty_cycle=0;tuner_tone_on=False
+                    tuner_next_t=now+TUNER_OFF_S
+                else:
+                    buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
+                    tuner_tone_on=True;tuner_next_t=now+TUNER_ON_S
+        else:
+            if tuner_tone_on:
+                buzzer.duty_cycle=0;tuner_tone_on=False
+        a2_now=btn_a2.value
+        if btn_a2_prev and not a2_now:
+            if not both_held() and not tuner_muted:
+                wait_release(btn_a2)
+                a2_now=btn_a2.value
+                tuner_str_idx=(tuner_str_idx+1)%len(TUNER_STRINGS)
+                name,freq=TUNER_STRINGS[tuner_str_idx]
+                TUNER_FREQ=freq
+                lbl_note.text=name+"  "+str(freq)+" Hz"
+                buzzer.duty_cycle=0;tuner_tone_on=False
+                tuner_next_t=time.monotonic()+0.1
+                display.refresh()
+        btn_a2_prev=a2_now
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
             if not both_held():
@@ -357,7 +395,10 @@ while True:
                 lbl_tuner_mute.text="MUTE" if tuner_muted else "LIVE"
                 display.refresh()
                 beat_start=time.monotonic()+0.15;step=FADE_STEPS
-                # TODO: apply tuner_muted to audio hardware
+                if not tuner_muted:
+                    buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
+                    tuner_tone_on=True;tuner_next_t=time.monotonic()+TUNER_ON_S
+                else:
+                    buzzer.duty_cycle=0;tuner_tone_on=False
         btn_boot_prev=boot_now
-        btn_a2_prev=btn_a2.value
-        time.sleep(0.05)
+        time.sleep(0.02)
