@@ -34,6 +34,8 @@ Soldered vibration circuit.
 
 https://github.com/user-attachments/assets/0c229e03-611d-4f90-9194-24d2ad153cdb
 
+Soldered piezo.
+
 https://github.com/user-attachments/assets/ea14efcf-dfc6-47f1-8c45-b138b7211cc2
 
 
