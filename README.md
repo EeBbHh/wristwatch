@@ -8,7 +8,7 @@ Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
 Circuitpython for QTpy RP2040: https://circuitpython.org/board/adafruit_qtpy_rp2040/
 
-Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201
+Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
 
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
@@ -38,4 +38,6 @@ Soldered piezo.
 
 https://github.com/user-attachments/assets/ea14efcf-dfc6-47f1-8c45-b138b7211cc2
 
+LIPO BFF added. Backlight hack added(red wire at the top) to allow for screen dimming as a battery saving feature.
 
+![ScreenShot](powered.jpg)
