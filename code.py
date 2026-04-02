@@ -1,16 +1,23 @@
 # Clock+Metro+Tuner | QT Py RP2040 (#4900) EYESPI BFF (#5772)
-# GC9A01A 240x240 LCD (#6178) IoT Button BFF (#5666)
+# GC9A01A 240x240 LCD (#6178) Charger BFF (#5397) 400mAh LiPo (#3898)
 # Both held 0.5s: Clock->Metro->Tuner->Clock
 # Clock: BOOT=enter/next field  A2=increment
 # Metro: A2 short=BPM+  A2 long=timesig  BOOT short=BPM-  BOOT long=sound/silent
-# Tuner: A2=cycle string (E A D G B, LIVE only)  BOOT=toggle LIVE/MUTE
-import board,busio,displayio,fourwire,adafruit_gc9a01a,pwmio
+# Tuner: BOOT=toggle LIVE/MUTE  (A440 reference pitch)
+import gc
+gc.collect()
+import board,busio,displayio,fourwire,adafruit_gc9a01a
 import vectorio,bitmaptools,terminalio,digitalio,rtc
-import time,math,gc
+import time,math
 from adafruit_display_text.bitmap_label import Label
 from adafruit_display_text import label
 gc.collect()
 displayio.release_displays()
+gc.collect()
+shared_bitmap=displayio.Bitmap(240,240,max(1,int((60.0/40)/0.065)+1))
+shared_bitmap.fill(0)
+import pwmio
+backlight=pwmio.PWMOut(board.A0,frequency=1000,duty_cycle=65535)
 spi=busio.SPI(clock=board.SCK,MOSI=board.MOSI)
 display_bus=fourwire.FourWire(spi,command=board.RX,chip_select=board.TX,reset=None,baudrate=24_000_000)
 display=adafruit_gc9a01a.GC9A01A(display_bus,width=240,height=240,rotation=0,auto_refresh=False)
@@ -37,9 +44,6 @@ MAX_FADE=max(1,int((60.0/BPM_MIN)/REFRESH_FLOOR))
 RANGES=(( 40, 59,"whole"),( 60, 79,"half"),( 80,119,"quarter"),(120,159,"eighth"),(160,200,"double_eighth"))
 GRADIENT=(( 40,(0x00,0x22,0xFF)),( 59,(0x00,0x99,0xFF)),( 60,(0x00,0xCC,0xAA)),( 79,(0x00,0xFF,0x88)),( 80,(0xFF,0xCC,0x00)),(119,(0xFF,0x77,0x00)),(120,(0xFF,0x44,0x00)),(159,(0xFF,0x00,0x44)),(160,(0xFF,0x00,0x99)),(200,(0xCC,0x00,0x00)))
 NUM_COLOURS=MAX_FADE+1
-gc.collect()
-shared_bitmap=displayio.Bitmap(WIDTH,HEIGHT,NUM_COLOURS)
-shared_bitmap.fill(0)
 CLK_BG=0;CLK_GREEN=1;CLK_RED=2
 COLOR_RED=0xFF2200
 COLOR_CYAN=0x00FFFF;COLOR_WHITE=0xFFFFFF;COLOR_PINK_PURPLE=0xCC44AA
@@ -53,6 +57,11 @@ metro_palette=displayio.Palette(NUM_COLOURS)
 metro_palette[0]=0x000000
 clock_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=clock_palette)
 metro_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=metro_palette)
+gc.collect()
+BL_FULL=65535;BL_DIM=32768
+DIM_AFTER_S=3600;BATT_CHECK_S=60;CHARGE_FLASH_S=1.0
+CHARGE_V=4.3
+BAT_GREEN=0x00CC44;BAT_YELLOW=0xCCAA00;BAT_RED=0xFF2200
 LABEL_R=100;DOT_R=92
 p_black=displayio.Palette(1);p_black[0]=0x000000
 p_pink_purple=displayio.Palette(1);p_pink_purple[0]=COLOR_PINK_PURPLE
@@ -120,67 +129,8 @@ def build_metro_palette(colour,fade_steps):
 lbl_bpm=label.Label(terminalio.FONT,text="BPM",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(1.0,0.5),anchored_position=(CX-45,CY))
 lbl_num=label.Label(terminalio.FONT,text="80",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(0.0,0.5),anchored_position=(CX+45,CY))
 gc.collect()
-def filled_ellipse(cx,cy,rx,ry,ang):
-    buf=bytearray();a=math.radians(ang);ca,sa=math.cos(a),math.sin(a);rx2,ry2=rx*rx,ry*ry
-    for dy in range(-ry-2,ry+3):
-        for dx in range(-rx-2,rx+3):
-            xr=dx*ca+dy*sa;yr=-dx*sa+dy*ca
-            if xr*xr*ry2+yr*yr*rx2<=rx2*ry2:
-                px,py=cx+dx,cy+dy
-                if 0<=px<WIDTH and 0<=py<HEIGHT:buf.append(px);buf.append(py)
-    return buf
-def outline_ellipse(cx,cy,rx,ry,ang,thickness=3):
-    buf=bytearray();a=math.radians(ang);ca,sa=math.cos(a),math.sin(a);rx2,ry2=rx*rx,ry*ry
-    irx,iry=max(1,rx-thickness),max(1,ry-thickness);irx2,iry2=irx*irx,iry*iry
-    for dy in range(-ry-2,ry+3):
-        for dx in range(-rx-2,rx+3):
-            xr=dx*ca+dy*sa;yr=-dx*sa+dy*ca
-            outer=xr*xr*ry2+yr*yr*rx2<=rx2*ry2;inner=xr*xr*iry2+yr*yr*irx2<=irx2*iry2
-            if outer and not inner:
-                px,py=cx+dx,cy+dy
-                if 0<=px<WIDTH and 0<=py<HEIGHT:buf.append(px);buf.append(py)
-    return buf
-def thick_vline(x,y0,y1,w):
-    buf=bytearray();half=w//2
-    for y in range(min(y0,y1),max(y0,y1)+1):
-        for dx in range(-half,half+1):
-            px=x+dx
-            if 0<=px<WIDTH and 0<=y<HEIGHT:buf.append(px);buf.append(y)
-    return buf
-def filled_rect(x,y,w,h):
-    buf=bytearray()
-    for dy in range(h):
-        for dx in range(w):
-            px,py=x+dx,y+dy
-            if 0<=px<WIDTH and 0<=py<HEIGHT:buf.append(px);buf.append(py)
-    return buf
-def bezier_flag(x0,y0,steps=20,thickness=3):
-    buf=bytearray();p0=(x0,y0);p1=(x0+22,y0+2);p2=(x0+24,y0+14);p3=(x0+14,y0+22);half=thickness//2
-    for i in range(steps+1):
-        t=i/steps;mt=1-t
-        bx=int(mt**3*p0[0]+3*mt**2*t*p1[0]+3*mt*t**2*p2[0]+t**3*p3[0])
-        by=int(mt**3*p0[1]+3*mt**2*t*p1[1]+3*mt*t**2*p2[1]+t**3*p3[1])
-        for dy in range(-half,half+1):
-            for dx in range(-half,half+1):
-                if dx*dx+dy*dy<=half*half+1:
-                    px,py=bx+dx,by+dy
-                    if 0<=px<WIDTH and 0<=py<HEIGHT:buf.append(px);buf.append(py)
-    return buf
-def merge(*bufs):
-    out=bytearray()
-    for buf in bufs:out.extend(buf)
-    return out
-gc.collect();SPRITE={}
-SPRITE["whole"]=outline_ellipse(CX,CY,20,14,-20,thickness=4);gc.collect()
-head_h=outline_ellipse(CX-12,CY+15,14,10,-20,thickness=3);stem_h=thick_vline(CX,CY+8,CY-32,4)
-SPRITE["half"]=merge(head_h,stem_h);del head_h,stem_h;gc.collect()
-head_q=filled_ellipse(CX-12,CY+15,14,10,-20);stem_q=thick_vline(CX,CY+8,CY-32,4)
-SPRITE["quarter"]=merge(head_q,stem_q);del head_q,stem_q;gc.collect()
-head_e=filled_ellipse(CX-12,CY+15,14,10,-20);stem_e=thick_vline(CX,CY+8,CY-32,4);flag_e=bezier_flag(CX,CY-32,steps=24,thickness=3)
-SPRITE["eighth"]=merge(head_e,stem_e,flag_e);del head_e,stem_e,flag_e;gc.collect()
-head_e1=filled_ellipse(CX-22,CY+15,13,9,-20);stem_e1=thick_vline(CX-11,CY+7,CY-22,4)
-head_e2=filled_ellipse(CX+12,CY+5,13,9,-20);stem_e2=thick_vline(CX+23,CY-3,CY-22,4);beam=filled_rect(CX-11,CY-26,35,7)
-SPRITE["double_eighth"]=merge(head_e1,stem_e1,head_e2,stem_e2,beam);del head_e1,stem_e1,head_e2,stem_e2,beam;gc.collect()
+import sprites as _spr;gc.collect()
+SPRITE=_spr.build_sprites();del _spr;gc.collect()
 def apply_bpm(bpm):
     colour,note=bpm_range(bpm);cycle=60.0/bpm;fsteps=max(1,int(cycle/REFRESH_FLOOR))
     build_metro_palette(colour,fsteps)
@@ -191,7 +141,7 @@ def apply_sprite(buf,colour_idx):
 metro_group=displayio.Group()
 metro_group.append(metro_tilegrid);metro_group.append(lbl_bpm);metro_group.append(lbl_num)
 metro_silent=False
-lbl_audio_mode=label.Label(terminalio.FONT,text="SOUND",scale=1,color=COLOR_CYAN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,192))
+lbl_audio_mode=label.Label(terminalio.FONT,text="SOUND",scale=1,color=COLOR_CYAN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 metro_group.append(lbl_audio_mode)
 TIME_SIGS=("4/4","3/4");TIME_SIG_BEATS=(4,3)
 metro_ts_idx=0;metro_beat_pos=0
@@ -208,19 +158,27 @@ def _build_tuner_group():
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-8,y=bt,width=16,height=bh))
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-3,y=ht,width=6,height=hb-ht))
     global lbl_note
-    lbl_note=Label(terminalio.FONT,text="E2  82 Hz",color=COLOR_PINK_PURPLE,scale=2)
+    lbl_note=Label(terminalio.FONT,text="A4 440 Hz",color=COLOR_PINK_PURPLE,scale=2)
     lbl_note.anchor_point=(0.5,0.5);lbl_note.anchored_position=(CX,55);g.append(lbl_note)
     return g
 tuner_group=_build_tuner_group();del _build_tuner_group;gc.collect()
 tuner_muted=False
-TUNER_STRINGS=(("E2",82),("A2",110),("D3",147),("G3",196),("B3",247))
-tuner_str_idx=0
-TUNER_FREQ=TUNER_STRINGS[0][1]
+TUNER_FREQ=440
 TUNER_ON_S=4.0   # tone on duration
 TUNER_OFF_S=2.0  # silence between pulses
 tuner_tone_on=False;tuner_next_t=0.0
-lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,192))
+display_dimmed=False;last_interaction=0.0
+bat_charging=False;bat_percent=100
+last_batt_check=0.0;last_flash_t=0.0;flash_state=True
+lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 tuner_group.append(lbl_tuner_mute);gc.collect()
+lbl_bat_clock=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,197))
+lbl_bat_metro=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,205))
+lbl_bat_tuner=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,anchor_point=(0.5,0.5),anchored_position=(CX,200))
+clock_group.append(lbl_bat_clock)
+metro_group.append(lbl_bat_metro)
+tuner_group.append(lbl_bat_tuner)
+gc.collect()
 def both_held():return(not btn_a2.value)and(not btn_boot.value)
 def wait_release_both():
     while(not btn_a2.value)or(not btn_boot.value):time.sleep(0.02)
@@ -237,6 +195,35 @@ def vibrate(ms):
 def tone(freq,ms):
     buzzer.frequency=freq;buzzer.duty_cycle=BUZZER_DUTY
     time.sleep(ms/1000);buzzer.duty_cycle=0
+def set_backlight(duty):backlight.duty_cycle=duty
+def register_interaction():
+    global last_interaction,display_dimmed
+    last_interaction=time.monotonic()
+    if display_dimmed:set_backlight(BL_FULL);display_dimmed=False
+def is_waking():return display_dimmed
+def check_dim_timeout():
+    global display_dimmed
+    if not display_dimmed and time.monotonic()-last_interaction>=DIM_AFTER_S:
+        set_backlight(BL_DIM);display_dimmed=True
+def read_battery():
+    global btn_a2
+    import analogio
+    btn_a2.deinit()
+    adc=analogio.AnalogIn(board.A2);raw=adc.value;adc.deinit()
+    btn_a2=digitalio.DigitalInOut(board.A2)
+    btn_a2.direction=digitalio.Direction.INPUT;btn_a2.pull=digitalio.Pull.UP
+    return(raw/65535)*3.3*2.0
+def bat_colour(pct):
+    if pct>=50:return BAT_GREEN
+    if pct>=25:return BAT_YELLOW
+    return BAT_RED
+def update_bat_labels():
+    global last_flash_t,flash_state
+    now=time.monotonic();c=bat_colour(bat_percent)
+    if bat_charging:
+        if now-last_flash_t>=CHARGE_FLASH_S:flash_state=not flash_state;last_flash_t=now
+        c=c if flash_state else 0x000000
+    lbl_bat_clock.color=c;lbl_bat_metro.color=c;lbl_bat_tuner.color=c
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
 def enter_clock():
@@ -286,11 +273,21 @@ BPM=BPM_START
 cycle_s,FADE_STEPS,SPR=apply_bpm(BPM)
 beat_start=time.monotonic()+0.15;beat_count=0;last_beat_t=beat_start;step=FADE_STEPS
 btn_a2_prev=True;btn_boot_prev=True
+last_interaction=time.monotonic()
 while True:
+    check_dim_timeout()
+    update_bat_labels()
+    now_t=time.monotonic()
+    if now_t-last_batt_check>=BATT_CHECK_S:
+        voltage=read_battery();bat_charging=voltage>=CHARGE_V
+        bat_percent=max(0,min(100,int((voltage-3.0)/(4.2-3.0)*100))) if not bat_charging else 100
+        last_batt_check=now_t;gc.collect()
     if both_held():
         if check_mode_switch():advance_mode();continue
     if mode==MODE_CLOCK:
         if not btn_boot.value:
+            if is_waking():register_interaction();continue
+            register_interaction()
             wait_release(btn_boot);result=run_time_set()
             if not result:
                 if check_mode_switch():advance_mode()
@@ -306,7 +303,8 @@ while True:
     elif mode==MODE_METRO:
         a2_now=btn_a2.value
         if btn_a2_prev and not a2_now:
-            if not both_held():
+            if is_waking():register_interaction();btn_a2_prev=btn_a2.value
+            elif not both_held():
                 a2_press_t=time.monotonic()
                 while not btn_a2.value:
                     if both_held():break
@@ -325,7 +323,8 @@ while True:
         btn_a2_prev=a2_now
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
-            if not both_held():
+            if is_waking():register_interaction();boot_now=btn_boot.value
+            elif not both_held():
                 boot_press_t=time.monotonic()
                 while not btn_boot.value:
                     if both_held():break
@@ -375,26 +374,17 @@ while True:
                 buzzer.duty_cycle=0;tuner_tone_on=False
         a2_now=btn_a2.value
         if btn_a2_prev and not a2_now:
-            if not both_held() and not tuner_muted:
-                wait_release(btn_a2)
-                a2_now=btn_a2.value
-                tuner_str_idx=(tuner_str_idx+1)%len(TUNER_STRINGS)
-                name,freq=TUNER_STRINGS[tuner_str_idx]
-                TUNER_FREQ=freq
-                lbl_note.text=name+"  "+str(freq)+" Hz"
-                buzzer.duty_cycle=0;tuner_tone_on=False
-                tuner_next_t=time.monotonic()+0.1
-                display.refresh()
+            if is_waking():register_interaction();a2_now=btn_a2.value
         btn_a2_prev=a2_now
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
-            if not both_held():
+            if is_waking():register_interaction();boot_now=btn_boot.value
+            elif not both_held():
                 wait_release(btn_boot)
                 boot_now=btn_boot.value
                 tuner_muted=not tuner_muted
                 lbl_tuner_mute.text="MUTE" if tuner_muted else "LIVE"
                 display.refresh()
-                beat_start=time.monotonic()+0.15;step=FADE_STEPS
                 if not tuner_muted:
                     buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
                     tuner_tone_on=True;tuner_next_t=time.monotonic()+TUNER_ON_S
