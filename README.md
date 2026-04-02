@@ -1,6 +1,6 @@
 Disclaimer. This is a work in progress. Open source proof of concept provided. Screenshots and video provided. Documentation is subject to change. 
 
-NOTICE! Due to memory limits a second python file was created. sprites.py is required. Place next to code.py in the CIRCUITPY drive.
+NOTICE! Due to memory limits a second python file was created. sprites.py is required. Place next to code.py in the CIRCUITPY drive. The follwing lines need to be added to boot.py "import displayio" and below that "displayio.release_displays()"
 
 Clock + Metronome + Tuner wristwatch. The clock draws hands directly onto a bitmap, the metronome animates pre-computed note sprites and the tuner renders a vector tuning fork. All modes use labels. All modes have settings and controls. Reference document has control scheme and other tidbits. 
 
@@ -15,6 +15,10 @@ Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
 Circuitpython 10.x libraries: https://circuitpython.org/libraries
+
+You will need the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
+
+Add the following to the requirements folder: adafruit_bus_device folder, adafruit_display_text folder and adafruit_gc9a01a folder.
 
 ![ScreenShot](watch.jpg)
 
