@@ -27,9 +27,8 @@ btn_a2.pull=digitalio.Pull.UP
 btn_boot=digitalio.DigitalInOut(board.BUTTON)
 btn_boot.direction=digitalio.Direction.INPUT
 btn_boot.pull=digitalio.Pull.UP
-motor=digitalio.DigitalInOut(board.A1)
-motor.direction=digitalio.Direction.OUTPUT
-motor.value=False
+motor=pwmio.PWMOut(board.A1,frequency=1000,duty_cycle=0)
+MOTOR_STRENGTH=49151  # 75% — adjust 0-65535 to set vibration strength
 buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
 buzzer.frequency=440
 BUZZER_DUTY=32768
@@ -190,7 +189,7 @@ def check_mode_switch():
 def wait_release(btn):
     while not btn.value:time.sleep(0.05)
 def vibrate(ms):
-    motor.value=True;time.sleep(ms/1000);motor.value=False
+    motor.duty_cycle=MOTOR_STRENGTH;time.sleep(ms/1000);motor.duty_cycle=0
 def tone(freq,ms):
     buzzer.frequency=freq;buzzer.duty_cycle=BUZZER_DUTY
     time.sleep(ms/1000);buzzer.duty_cycle=0
