@@ -2,7 +2,7 @@
 # Adafruit QT Py RP2040 (#4900) + EYESPI BFF (#5772)
 # GC9A01A 1.28" 240x240 round LCD (#6178)
 # Buttons: any two momentary tactile switches wired to A2→GND and BOOT→GND
-# Audio: passive buzzer on A3 (2 wires), vibration motor on A1 (transistor circuit)
+# Audio: passive buzzer on A3 (2 wires), vibration motor on A1 (transistor circuit, PWM strength control)
 #
 # Controls:
 #   A2 short  — BPM up (+10, max 200)
@@ -49,14 +49,15 @@ gc.collect()
 # ── Audio hardware ────────────────────────────────────────────────
 # Passive buzzer on A3: one leg to A3, other to GND. No resistor needed.
 # Vibration motor on A1: requires 2N2222 transistor circuit (see project docs).
+# MOTOR_STRENGTH sets vibration intensity (0-65535). 49151=75%, 32768=50%.
+# Do not go below ~32768 — ERM motors may not start reliably at low duty cycles.
 import pwmio
 buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
 buzzer.frequency=440
 BUZZER_DUTY=32768
 
-motor=digitalio.DigitalInOut(board.A1)
-motor.direction=digitalio.Direction.OUTPUT
-motor.value=False
+motor=pwmio.PWMOut(board.A1,frequency=1000,duty_cycle=0)
+MOTOR_STRENGTH=49151  # 75% — adjust to taste once cased
 
 # ── Display ───────────────────────────────────────────────────────
 spi=busio.SPI(clock=board.SCK,MOSI=board.MOSI)
@@ -202,7 +203,7 @@ def apply_sprite(buf,colour_idx):
 
 # ── Audio helpers ─────────────────────────────────────────────────
 def vibrate(ms):
-    motor.value=True;time.sleep(ms/1000);motor.value=False
+    motor.duty_cycle=MOTOR_STRENGTH;time.sleep(ms/1000);motor.duty_cycle=0
 
 def tone(freq,ms):
     buzzer.frequency=freq;buzzer.duty_cycle=BUZZER_DUTY
