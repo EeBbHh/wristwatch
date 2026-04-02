@@ -1,12 +1,11 @@
 vibration motor complete
+
 piezo buzzer complete
-screen dimming
-	stubs created
-	needs soldering
-power(lipo BFF + battery)
-	stubs created
-	need to repurpose old one or buy new one
-	needs to fit in existing stack or replace IoT button BFF
+
+screen dimming complete
+
+power(lipo BFF + battery) complete
+
 replace boot button and IoT button BFF with two switch buttons
 	two slim tactie switch buttons would be ideal
 	need to buy some
