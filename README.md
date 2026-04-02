@@ -2,7 +2,7 @@ Disclaimer. This is a work in progress. Open source proof of concept provided. S
 
 NOTICE! Due to memory limits a second python file was created. sprites.py is required. Place next to code.py in the CIRCUITPY drive. The follwing lines need to be added to boot.py "import displayio" and below that "displayio.release_displays()"
 
-Clock + Metronome + Tuner wristwatch. The clock draws hands directly onto a bitmap, the metronome animates pre-computed note sprites and the tuner renders a vector tuning fork. All modes use labels. All modes have settings and controls. Reference document has control scheme and other tidbits. 
+Clock + Metronome + Tuner wristwatch is the goal of this project. 
 
 Dev Enviornment: Mu https://codewith.mu/en/
 
