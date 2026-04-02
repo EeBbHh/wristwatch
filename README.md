@@ -47,3 +47,9 @@ https://github.com/user-attachments/assets/ea14efcf-dfc6-47f1-8c45-b138b7211cc2
 LIPO BFF added. Backlight hack added(red wire at the top) to allow for screen dimming as a battery saving feature.
 
 ![ScreenShot](powered.jpg)
+
+Screen dimming test. At the 10 second mark the screen dims.
+
+https://github.com/user-attachments/assets/76fc044c-b8f3-486a-8c0e-50453308a22c
+
+
