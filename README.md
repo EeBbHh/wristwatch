@@ -1,8 +1,8 @@
-Disclaimer. This is a work in progress. Open source proof of concept provided. Screenshots and video provided. Documentation is subject to change. 
+Disclaimer. This is a work in progress. Open source proof of concept provided. Screenshots and video provided. Documentation is subject to change.
 
 NOTICE! Due to memory limits a second python file was created. sprites.py is required. Place next to code.py in the CIRCUITPY drive. The follwing lines need to be added to boot.py "import displayio" and below that "displayio.release_displays()"
 
-Clock + Metronome + Tuner wristwatch is the goal of this project. 
+Clock + Metronome + Tuner wristwatch is the goal of this project. In addition there are standalone files for each mode.
 
 Dev Enviornment: Mu https://codewith.mu/en/
 
