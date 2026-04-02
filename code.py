@@ -35,7 +35,6 @@ buzzer.frequency=440
 BUZZER_DUTY=32768
 BOTH_HOLD_S=0.5
 CX,CY=120,120
-WIDTH,HEIGHT=240,240
 clock_rtc=rtc.RTC()
 clock_rtc.datetime=time.struct_time((2025,1,1,12,0,0,0,-1,-1))
 BPM_START=80;BPM_MIN=40;BPM_MAX=200;BPM_STEP=10
@@ -167,7 +166,7 @@ TUNER_FREQ=440
 TUNER_ON_S=4.0   # tone on duration
 TUNER_OFF_S=2.0  # silence between pulses
 tuner_tone_on=False;tuner_next_t=0.0
-display_dimmed=False;last_interaction=0.0
+display_dimmed=False
 bat_charging=False;bat_percent=100
 last_batt_check=0.0;last_flash_t=0.0;flash_state=True
 lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
@@ -355,10 +354,7 @@ while True:
                 vibrate(80 if is_downbeat else 50)
             metro_beat_pos=(metro_beat_pos+1)%TIME_SIG_BEATS[metro_ts_idx]
             now=time.monotonic();actual_interval=now-last_beat_t;last_beat_t=now
-            if beat_count%8==0:
-                expected=cycle_s*8;error_ms=round((actual_interval*8-expected)*1000)
-                print("BPM="+str(BPM)+" drift="+str(error_ms)+"ms")
-                gc.collect()
+            if beat_count%8==0:gc.collect()
     elif mode==MODE_TUNER:
         now=time.monotonic()
         if not tuner_muted:
@@ -385,6 +381,7 @@ while True:
                 tuner_muted=not tuner_muted
                 lbl_tuner_mute.text="MUTE" if tuner_muted else "LIVE"
                 display.refresh()
+                register_interaction()
                 if not tuner_muted:
                     buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
                     tuner_tone_on=True;tuner_next_t=time.monotonic()+TUNER_ON_S
