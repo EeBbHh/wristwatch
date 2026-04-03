@@ -56,10 +56,10 @@ metro_palette[0]=0x000000
 clock_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=clock_palette)
 metro_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=metro_palette)
 gc.collect()
-BL_FULL=65535;BL_DIM=32768
-DIM_AFTER_S=3600;BATT_CHECK_S=60;CHARGE_FLASH_S=1.0
+BL_FULL=65535;BL_DIM=16384
+DIM_AFTER_S=600;BATT_CHECK_S=60
 CHARGE_V=4.3
-BAT_GREEN=0x00CC44;BAT_YELLOW=0xCCAA00;BAT_RED=0xFF2200
+BAT_GREEN=0x00CC44;BAT_YELLOW=0xCCAA00;BAT_RED=0xFF2200;BAT_BLUE=0x0044FF
 LABEL_R=100;DOT_R=92
 p_black=displayio.Palette(1);p_black[0]=0x000000
 p_pink_purple=displayio.Palette(1);p_pink_purple[0]=COLOR_PINK_PURPLE
@@ -167,7 +167,7 @@ TUNER_OFF_S=2.0  # silence between pulses
 tuner_tone_on=False;tuner_next_t=0.0
 display_dimmed=False
 bat_charging=False;bat_percent=100
-last_batt_check=0.0;last_flash_t=0.0;flash_state=True
+last_batt_check=0.0
 lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 tuner_group.append(lbl_tuner_mute);gc.collect()
 lbl_bat_clock=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,197))
@@ -216,11 +216,7 @@ def bat_colour(pct):
     if pct>=25:return BAT_YELLOW
     return BAT_RED
 def update_bat_labels():
-    global last_flash_t,flash_state
-    now=time.monotonic();c=bat_colour(bat_percent)
-    if bat_charging:
-        if now-last_flash_t>=CHARGE_FLASH_S:flash_state=not flash_state;last_flash_t=now
-        c=c if flash_state else 0x000000
+    c=BAT_BLUE if bat_charging else bat_colour(bat_percent)
     lbl_bat_clock.color=c;lbl_bat_metro.color=c;lbl_bat_tuner.color=c
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
@@ -278,13 +274,20 @@ while True:
     now_t=time.monotonic()
     if now_t-last_batt_check>=BATT_CHECK_S:
         voltage=read_battery();bat_charging=voltage>=CHARGE_V
-        bat_percent=max(0,min(100,int((voltage-3.0)/(4.2-3.0)*100))) if not bat_charging else 100
+        raw_pct=int((min(voltage,4.2)-3.0)/(4.2-3.0)*100)
+        bat_percent=max(0,min(100,raw_pct))
         last_batt_check=now_t;gc.collect()
     if both_held():
         if check_mode_switch():advance_mode();continue
     if mode==MODE_CLOCK:
+        if not btn_a2.value:
+            if is_waking():register_interaction()
+            while not btn_a2.value:time.sleep(0.01)
         if not btn_boot.value:
-            if is_waking():register_interaction();continue
+            if is_waking():
+                register_interaction()
+                while not btn_boot.value:time.sleep(0.01)
+                continue
             register_interaction()
             wait_release(btn_boot);result=run_time_set()
             if not result:
