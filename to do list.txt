@@ -6,17 +6,20 @@ screen dimming complete
 
 power(lipo BFF + battery) complete
 
+real world test pass 1 complete
+
+optimize complete
+
+real world test pass 2
+
 replace boot button and IoT button BFF with two switch buttons
 	two slim tactie switch buttons would be ideal
 	need to buy some
 	need to solder	
+	stubs are in place
 
-need to find a smaller battery
+need to find a smaller size battery
 
 maybe use neopixel to flash with metronome
-
-maybe replace RP2040 with the ESP32S3withPSRAM
-maybe connect STEMMAQT RTC breakout for fun
-maybe connect STEMMAQT haptic motor breakout for fun
 
 revisit string tunings feature
