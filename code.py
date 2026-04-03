@@ -14,7 +14,7 @@ from adafruit_display_text import label
 gc.collect()
 displayio.release_displays()
 gc.collect()
-shared_bitmap=displayio.Bitmap(240,240,max(1,int((60.0/40)/0.065)+1))
+shared_bitmap=displayio.Bitmap(240,240,24)  # 24 = NUM_COLOURS at BPM_MIN=40, REFRESH_FLOOR=0.065
 shared_bitmap.fill(0)
 import pwmio
 backlight=pwmio.PWMOut(board.A0,frequency=1000,duty_cycle=65535)
@@ -33,7 +33,7 @@ buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
 buzzer.frequency=440
 BUZZER_DUTY=32768
 BOTH_HOLD_S=0.5
-CX,CY=120,120
+CX=120;CY=120  # CY used by sprites.py only
 clock_rtc=rtc.RTC()
 clock_rtc.datetime=time.struct_time((2025,1,1,12,0,0,0,-1,-1))
 BPM_START=80;BPM_MIN=40;BPM_MAX=200;BPM_STEP=10
@@ -166,7 +166,7 @@ TUNER_ON_S=4.0   # tone on duration
 TUNER_OFF_S=2.0  # silence between pulses
 tuner_tone_on=False;tuner_next_t=0.0
 display_dimmed=False
-bat_charging=False;bat_percent=100
+bat_charging=False;bat_percent=0  # unknown until first battery read
 last_batt_check=0.0
 lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 tuner_group.append(lbl_tuner_mute);gc.collect()
