@@ -10,15 +10,14 @@ real world test pass 1 complete
 
 optimize complete
 
-real world test pass 2
+real world test pass 2 complete
 
 replace boot button and IoT button BFF with two switch buttons
 	two slim tactie switch buttons would be ideal
-	need to buy some
 	need to solder	
 	stubs are in place
 
-need to find a smaller size battery
+need to find a smaller size battery with same or more cpacity
 
 maybe use neopixel to flash with metronome
 
