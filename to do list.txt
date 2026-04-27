@@ -13,11 +13,17 @@ optimize complete
 real world test pass 2 complete
 
 replace boot button and IoT button BFF with two switch buttons
-	two slim tactie switch buttons would be ideal
-	need to solder	
+	Prototype board fabed and ordered.
+	Need to solder.
 	stubs are in place
 
+replace EYESPI BFF
+	Prototype board almost complete. Needs finishing touches.
+	need to order and fab
+	need to solder
+
 need to find a smaller size battery with same or more cpacity
+	Battery ordered.
 
 maybe use neopixel to flash with metronome
 
