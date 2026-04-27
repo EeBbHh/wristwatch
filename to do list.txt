@@ -1,30 +1,34 @@
-vibration motor complete
+Vibration motor complete
 
-piezo buzzer complete
+Piezo buzzer complete
 
-screen dimming complete
+Screen dimming complete
 
 power(lipo BFF + battery) complete
 
-real world test pass 1 complete
+Real world test pass 1 complete
 
-optimize complete
+Ooptimize complete
 
-real world test pass 2 complete
+Real world test pass 2 complete
 
-replace boot button and IoT button BFF with two switch buttons
+Replace boot button and IoT button BFF with two switch buttons
 	Prototype board fabed and ordered.
 	Need to solder.
 	stubs are in place
 
-replace EYESPI BFF
+Replace EYESPI BFF
 	Prototype board almost complete. Needs finishing touches.
 	need to order and fab
 	need to solder
 
-need to find a smaller size battery with same or more cpacity
+Need to find a smaller size battery with same or more cpacity
 	Battery ordered.
 
-maybe use neopixel to flash with metronome
+Maybe use neopixel to flash with metronome.
 
-revisit string tunings feature
+Revisit string tunings feature.
+
+Case design and fabrication.
+
+Testing testing testing.
