@@ -2,23 +2,27 @@ Disclaimer. This is a work in progress. Open source proof of concept provided. S
 
 NOTICE! Due to memory limits a second python file was created. sprites.py is required. Place next to code.py in the CIRCUITPY drive. The follwing lines need to be added to boot.py: "import displayio" and below that "displayio.release_displays()"
 
-Clock + Metronome + Tuner wristwatch is the goal of this project. In addition there are standalone files for each mode.
+Clock + Metronome + Tuner wristwatch is the goal of this project. In addition. There are standalone files for each mode.
 
-Dev Enviornment: Mu https://codewith.mu/en/
+Dev Enviornment: Mu https://codewith.mu/en/, KiCAD https://www.kicad.org/
 
 Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
 Circuitpython for QTpy RP2040: https://circuitpython.org/board/adafruit_qtpy_rp2040/
 
-Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
+Circuitpython 10.x libraries: https://circuitpython.org/libraries
 
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
-Circuitpython 10.x libraries: https://circuitpython.org/libraries
+Prototype 1 Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
 
-You will need the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
+Prototype 2 Hardware Changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer.
 
-Add the following to the requirements folder: adafruit_bus_device folder, adafruit_display_text folder and adafruit_gc9a01a folder.
+Prototype 3 Hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added.
+
+NOTE: Place the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
+
+NOTE: Add the following to the requirements folder: adafruit_bus_device folder, adafruit_display_text folder and adafruit_gc9a01a folder.
 
 ![ScreenShot](watch.jpg)
 
@@ -51,5 +55,9 @@ LIPO BFF added. Backlight hack added(red wire at the top) to allow for screen di
 Screen dimming test. At the 10 second mark the screen dims.
 
 https://github.com/user-attachments/assets/76fc044c-b8f3-486a-8c0e-50453308a22c
+
+Prototype 2 board screenshots. Pre and post solder. Video of board funtioning with watch.
+
+Prototype 3 board screenshots. Pre and post solder. Video of board funtioning with watch.
 
 
