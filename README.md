@@ -14,11 +14,11 @@ Circuitpython 10.x libraries: https://circuitpython.org/libraries
 
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
-Prototype 1 Additonal Hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
+Prototype 1 additonal hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
 
-Prototype 2 Hardware Changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer.
+Prototype 2 hardware changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer.
 
-Prototype 3 Hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added.
+Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added.
 
 NOTE: Place the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
 
