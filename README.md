@@ -56,8 +56,8 @@ Screen dimming test. At the 10 second mark the screen dims.
 
 https://github.com/user-attachments/assets/76fc044c-b8f3-486a-8c0e-50453308a22c
 
-Prototype 2 board screenshots. Pre and post solder. Video of board funtioning with watch.
+Prototype 2 board screenshots. Pre and post solder. Video of board functioning with watch.
 
 ![ScreenShot](protoboard.jpg)
 
-Prototype 3 board screenshots. Pre and post solder. Video of board funtioning with watch.
+Prototype 3 board screenshots. Pre and post solder. Video of board functioning with watch.
