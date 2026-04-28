@@ -23,7 +23,8 @@ Replace EYESPI BFF.
 	Need to solder.
 
 Need to find a smaller size battery with same or more cpacity.
-	Battery ordered.
+	https://www.adafruit.com/product/4236 ordered from digikey as it is out of stock on adafruit. It's a back order item on digikey. Has yet to ship.
+		Battery dimensions changed. Battery is thinner but wider. Cable is shorter and MAH increased to 420 from 400.
 
 Maybe use neopixel to flash with metronome.
 
