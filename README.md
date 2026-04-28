@@ -6,11 +6,15 @@ Clock + Metronome + Tuner wristwatch is the goal of this project. In addition. T
 
 Dev Enviornment: Mu https://codewith.mu/en/, KiCAD https://www.kicad.org/
 
-Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
-
 Circuitpython for QTpy RP2040: https://circuitpython.org/board/adafruit_qtpy_rp2040/
 
 Circuitpython 10.x libraries: https://circuitpython.org/libraries
+
+NOTE: Place the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
+
+NOTE: Add the following to the requirements folder: adafruit_bus_device folder, adafruit_display_text folder and adafruit_gc9a01a folder.
+
+Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
@@ -18,11 +22,9 @@ Prototype 1 additonal hardware: EYESPI BFF https://www.adafruit.com/product/5772
 
 Prototype 2 hardware changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer. Schematic and board file provided.
 
-Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added.
+Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added. Futher refinement is underway as I put protoboardV2 through testing.
 
-NOTE: Place the following in the lib folder: adafruit_bus_device folder, adafruit_display_text folder, adafruit_gc9a01a.mpy and adafruit_ticks.mpy. 
 
-NOTE: Add the following to the requirements folder: adafruit_bus_device folder, adafruit_display_text folder and adafruit_gc9a01a folder.
 
 ![ScreenShot](watch.jpg)
 
