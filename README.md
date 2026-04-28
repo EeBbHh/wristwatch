@@ -62,4 +62,6 @@ Prototype 2 board screenshots. Pre and post solder. Video of board functioning w
 
 ![ScreenShot](protoboardV2.jpg)
 
+![ScreenShot](pbV2solder.jpg)
+
 Prototype 3 board screenshots. Pre and post solder. Video of board functioning with watch.
