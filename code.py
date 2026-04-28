@@ -1,7 +1,7 @@
 # Clock+Metro+Tuner | QT Py RP2040 (#4900) EYESPI BFF (#5772)
 # GC9A01A 240x240 LCD (#6178) Charger BFF (#5397) 400mAh LiPo (#3898)
 # Both held 0.5s: Clock->Metro->Tuner->Clock
-# Clock: BOOT=enter/next field  A2=increment
+# Clock: BOOT=enter/next field  A2=increment  (BOOT wired to SDA pad)
 # Metro: A2 short=BPM+  A2 long=timesig  BOOT short=BPM-  BOOT long=sound/silent
 # Tuner: BOOT=toggle LIVE/MUTE  (A440 reference pitch)
 import gc
@@ -24,7 +24,7 @@ display=adafruit_gc9a01a.GC9A01A(display_bus,width=240,height=240,rotation=0,aut
 btn_a2=digitalio.DigitalInOut(board.A2)
 btn_a2.direction=digitalio.Direction.INPUT
 btn_a2.pull=digitalio.Pull.UP
-btn_boot=digitalio.DigitalInOut(board.BUTTON)
+btn_boot=digitalio.DigitalInOut(board.SDA)
 btn_boot.direction=digitalio.Direction.INPUT
 btn_boot.pull=digitalio.Pull.UP
 motor=pwmio.PWMOut(board.A1,frequency=1000,duty_cycle=0)
