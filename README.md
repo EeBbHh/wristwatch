@@ -22,9 +22,7 @@ Prototype 1 additonal hardware: EYESPI BFF https://www.adafruit.com/product/5772
 
 Prototype 2 hardware changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer. Schematic and board file provided. 
 
-Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added. 420mAh LIPO battery https://www.adafruit.com/product/4236. Futher refinement is underway as I put protoboardV2 through testing.
-
-
+Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added. SMD vibration motor replaces THT vibration motor. 420mAh LIPO battery https://www.adafruit.com/product/4236 replaces 400mAh LIPO battery. Futher refinement is underway as I put protoboardV2 through testing.
 
 ![ScreenShot](watch.jpg)
 
