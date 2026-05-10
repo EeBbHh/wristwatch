@@ -12,14 +12,10 @@ Ooptimize complete.
 
 Real world test pass 2 complete.
 
-Replace boot button and IoT button BFF with two switch buttons.
-	Prototype board fabed and ordered.
-	Need to solder.
-	Stubs are in place.
+Replace boot button and IoT button BFF with two switch buttons complete.
 
 Replace EYESPI BFF.
-	Prototype board almost complete. Needs finishing touches.
-	Need to order and fab.
+	Prototype board ordered.
 	Need to solder.
 
 Need to find a smaller size battery with same or more cpacity.
