@@ -1,6 +1,6 @@
-Vibration motor complete.
+Vibration motor complete. Replaed THT with SMD variant.
 
-Piezo buzzer complete.
+Piezo buzzer complete. Replaced piezo with magnetic transducer SMD component.
 
 Screen dimming complete.
 
@@ -20,7 +20,13 @@ Replace EYESPI BFF.
 
 Need to find a smaller size battery with same or more cpacity.
 	https://www.adafruit.com/product/4236 ordered from digikey as it is out of stock on adafruit. It's a back order item on digikey. Has yet to ship.
-		Battery dimensions changed. Battery is thinner but wider. Cable is shorter and MAH increased to 420 from 400.
+		Battery dimensions changed. Battery is thinner but wider. Cable is shorter and mAh increased to 420.
+
+Replace adafruit display with new 1.28 and 1.09 displays. Carrier PCB from adafruit not working for watch case. Each display will require a new FPC connector and it's own PCB.
+
+Look into replacing individual connectors with headers to recieve the QTpy stack.
+
+Reorg PCB around case design.
 
 Check memory headrom.
 
