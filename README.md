@@ -64,4 +64,12 @@ Prototype 2 board screenshots. Pre and post solder.
 
 ![ScreenShot](pbv2test.jpg)
 
-Prototype 3 board screenshots. Pre and post solder. Video of board functioning with watch.
+Prototype 3 board screenshots. EYESPI goes byby. Pre and post solder.
+
+Prototype 4a board screenshots. New 1.28 new FPC. Pre and post solder.
+
+Prototype 4b board screenshots. New 1.09 new FPC. Pre and post solder.
+
+Prototype 5 board screenshots. QTpy dock in connectors out. Pre and post solder.
+
+Prototype 6 board screenshots. PCB reorg for case. Pre and post solder.
