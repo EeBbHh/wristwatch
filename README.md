@@ -66,6 +66,8 @@ Prototype 2 board screenshots. Pre and post solder.
 
 Prototype 3 board screenshots. EYESPI goes byby. Pre and post solder.
 
+![ScreenShot](protoboardV3.jpg)
+
 Prototype 4a board screenshots. New 1.28 new FPC. Pre and post solder.
 
 Prototype 4b board screenshots. New 1.09 new FPC. Pre and post solder.
