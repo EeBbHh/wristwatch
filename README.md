@@ -70,10 +70,6 @@ Prototype 3 board screenshots. EYESPI BFF goes byby. Pre and post solder.
 
 ![ScreenShot](pbV3solder.jpg)
 
-Prototype 4a board screenshots. New 1.28 new FPC. Pre and post solder.
+Prototype 4a board screenshots. New 1.28 new FPC and QTpy dock. Pre and post solder.
 
 Prototype 4b board screenshots. New 1.09 new FPC. Pre and post solder.
-
-Prototype 5 board screenshots. QTpy dock in connectors out. Pre and post solder.
-
-Prototype 6 board screenshots. PCB reorg for case. Pre and post solder.
