@@ -18,11 +18,13 @@ Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
 Display: 1.28" Round TFT https://www.adafruit.com/product/6178
 
-Prototype 1 additonal hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
+Prototype 1 hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
 
-Prototype 2 hardware changes: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. Buttons added. Piezo replaced with magnetic transducer. Schematic and board file provided. 
+Prototype 2 hardware: IoT Button BFF removed. Prototype board added. SMD parts replace THT parts. All SMD parts purchsed from https://www.digikey.com/ Buttons added. Piezo replaced with magnetic transducer. Schematic and board file provided. 
 
-Prototype 3 hardware changes: EYESPI BFF removed. Prototype board updated. SMD FPC added. SMD vibration motor replaces THT vibration motor. 420mAh LIPO battery https://www.adafruit.com/product/4236 replaces 400mAh LIPO battery. Futher refinement is underway as I put protoboardV2 through testing.
+Prototype 3 hardware: EYESPI BFF removed. Prototype board updated. SMD FPC added. SMD vibration motor replaces THT vibration motor. 420mAh LIPO battery https://www.adafruit.com/product/4236 replaces 400mAh LIPO battery. 
+
+Prototype 4 hardware: Prototype board updated. New 1.28 Display https://www.buydisplay.com/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch, SMD FPC updated. QTpy dock added. Futher refinement is underway as I put protoboardV4 through testing.
 
 ![ScreenShot](watch.jpg)
 
