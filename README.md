@@ -76,5 +76,9 @@ Prototype 4a board screenshots. Pre and post solder.
 
 ![ScreenShot](protoboardV4.jpg)
 
+![ScreenShot](pvV4AsolderF.jpg)
+
+![ScreenShot](pvV4AsolderB.jpg)
+
 Prototype 4a1 board screenshots. Pre and post solder.
 
