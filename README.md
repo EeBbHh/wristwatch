@@ -16,7 +16,7 @@ NOTE: Add the following to the requirements folder: adafruit_bus_device folder, 
 
 Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
-Display: 1.28" Round TFT https://www.adafruit.com/product/6178
+Prototype 1, 2 and 3 Display: 1.28" Round TFT https://www.adafruit.com/product/6178 
 
 Prototype 1 hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
 
@@ -25,6 +25,8 @@ Prototype 2 hardware: IoT Button BFF removed. Prototype board added. SMD parts r
 Prototype 3 hardware: EYESPI BFF removed. Prototype board updated. SMD FPC added. SMD vibration motor replaces THT vibration motor. 420mAh LIPO battery https://www.adafruit.com/product/4236 replaces 400mAh LIPO battery. 
 
 Prototype 4 hardware: Prototype board updated. New 1.28 Display https://www.buydisplay.com/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch, SMD FPC updated. QTpy dock added. Futher refinement is underway as I put protoboardV4 through testing.
+
+Prototype 5 hardware: Circuit for display reset added. Circuit for backlight added. QTpy dock adjusted from 17.5mm to 18mm.
 
 ![ScreenShot](watch.jpg)
 
@@ -80,5 +82,5 @@ Prototype 4a board screenshots. Pre and post solder.
 
 ![ScreenShot](pvV4AsolderB.jpg)
 
-Prototype 4a1 board screenshots. Pre and post solder.
+Prototype 5a board screenshots. Pre and post solder.
 
