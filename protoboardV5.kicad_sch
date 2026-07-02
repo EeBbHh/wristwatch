@@ -5150,7 +5150,7 @@
 				)
 			)
 		)
-		(property "Value" "BSS138"
+		(property "Value" "U1"
 			(at 81.28 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)

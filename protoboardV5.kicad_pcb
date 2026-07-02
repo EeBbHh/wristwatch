@@ -1617,6 +1617,7 @@
 		(property "Reference" "J1"
 			(at 7.25 -1.95 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "a59ac53d-b8fc-41ed-888c-34d77d73eeec")
 			(effects
 				(font
@@ -1628,6 +1629,7 @@
 		(property "Value" "J1"
 			(at 7.25 -1.986625 0)
 			(layer "F.Fab")
+			(hide yes)
 			(uuid "2091b666-f572-448a-b277-9cbd919c3978")
 			(effects
 				(font
@@ -2340,7 +2342,7 @@
 				)
 			)
 		)
-		(property "Value" "BSS138"
+		(property "Value" "U1"
 			(at 2.5475 0.0414 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2784,7 +2786,7 @@
 		(uuid "b7649e0f-2723-4769-84ae-ea36780d39df")
 		(at 85 90.75 90)
 		(property "Reference" "LS1"
-			(at 2 -3.75 90)
+			(at -1.35 -3.7 90)
 			(layer "F.SilkS")
 			(uuid "07466731-838a-4756-85fd-3ccee2442d6d")
 			(effects
@@ -2795,7 +2797,7 @@
 			)
 		)
 		(property "Value" "LS1"
-			(at 2 -3.75 90)
+			(at -1.35 -3.7 90)
 			(layer "F.Fab")
 			(uuid "efce656f-547a-4317-afb0-3909410d74aa")
 			(effects
@@ -2960,12 +2962,6 @@
 		(path "/d165a7d5-8049-4a2d-9f93-81faeaf4e33b")
 		(sheetname "/")
 		(sheetfile "SMDv5a.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3107,17 +3103,6 @@
 			)
 			(layer "F.Fab")
 			(uuid "408b569a-9d2b-4d83-a883-9c30d674afe2")
-		)
-		(fp_text user "NC"
-			(at -2.25 -3.75 90)
-			(layer "F.SilkS")
-			(uuid "14cd61e0-d339-476f-901b-84496c803b4d")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
 		)
 		(fp_text user "-"
 			(at 4 0.75 90)
