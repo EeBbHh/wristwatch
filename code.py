@@ -3,7 +3,7 @@
 # Both held 0.5s: Clock->Metro->Tuner->Clock
 # Clock: BOOT=enter/next field  A2=increment  (BOOT wired to SDA pad)
 # Metro: A2 short=BPM+  A2 long=timesig  BOOT short=BPM-  BOOT long=sound/silent
-# Tuner: BOOT=toggle LIVE/MUTE  (A440 reference pitch)
+# Tuner: BOOT=strike/stop  A2=cycle note (E2 A2 D3 G3 B3 E4)
 import gc
 gc.collect()
 import board,busio,displayio,fourwire,adafruit_gc9a01a
@@ -36,11 +36,11 @@ BOTH_HOLD_S=0.5
 CX=120;CY=120  # CY used by sprites.py only
 clock_rtc=rtc.RTC()
 clock_rtc.datetime=time.struct_time((2025,1,1,12,0,0,0,-1,-1))
-BPM_START=80;BPM_MIN=40;BPM_MAX=200;BPM_STEP=10
+BPM_START=80;BPM_MIN=40;BPM_MAX=250;BPM_STEP=5
 REFRESH_FLOOR=0.065
 MAX_FADE=max(1,int((60.0/BPM_MIN)/REFRESH_FLOOR))
-RANGES=(( 40, 59,"whole"),( 60, 79,"half"),( 80,119,"quarter"),(120,159,"eighth"),(160,200,"double_eighth"))
-GRADIENT=(( 40,(0x00,0x22,0xFF)),( 59,(0x00,0x99,0xFF)),( 60,(0x00,0xCC,0xAA)),( 79,(0x00,0xFF,0x88)),( 80,(0xFF,0xCC,0x00)),(119,(0xFF,0x77,0x00)),(120,(0xFF,0x44,0x00)),(159,(0xFF,0x00,0x44)),(160,(0xFF,0x00,0x99)),(200,(0xCC,0x00,0x00)))
+RANGES=(( 40, 59,"whole"),( 60, 79,"half"),( 80,119,"quarter"),(120,159,"eighth"),(160,199,"double_eighth"),(200,250,"sixteenth"))
+GRADIENT=(( 40,(0x00,0x22,0xFF)),( 59,(0x00,0x99,0xFF)),( 60,(0x00,0xCC,0xAA)),( 79,(0x00,0xFF,0x88)),( 80,(0xFF,0xCC,0x00)),(119,(0xFF,0x77,0x00)),(120,(0xFF,0x44,0x00)),(159,(0xFF,0x00,0x44)),(160,(0xFF,0x00,0x99)),(199,(0xCC,0x00,0x00)),(200,(0xAA,0x00,0x00)),(250,(0x66,0x00,0x00)))
 NUM_COLOURS=MAX_FADE+1
 CLK_BG=0;CLK_GREEN=1;CLK_RED=2
 COLOR_RED=0xFF2200
@@ -57,7 +57,7 @@ clock_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=clock_palette)
 metro_tilegrid=displayio.TileGrid(shared_bitmap,pixel_shader=metro_palette)
 gc.collect()
 BL_FULL=65535;BL_DIM=16384
-DIM_AFTER_S=600;BATT_CHECK_S=60
+DIM_AFTER_S=300;BATT_CHECK_S=60
 CHARGE_V=4.3
 BAT_GREEN=0x00CC44;BAT_YELLOW=0xCCAA00;BAT_RED=0xFF2200;BAT_BLUE=0x0044FF
 LABEL_R=100;DOT_R=92
@@ -156,19 +156,20 @@ def _build_tuner_group():
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-8,y=bt,width=16,height=bh))
     g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-3,y=ht,width=6,height=hb-ht))
     global lbl_note
-    lbl_note=Label(terminalio.FONT,text="A4 440 Hz",color=COLOR_PINK_PURPLE,scale=2)
+    lbl_note=Label(terminalio.FONT,text="E4  330Hz",color=COLOR_PINK_PURPLE,scale=2)
     lbl_note.anchor_point=(0.5,0.5);lbl_note.anchored_position=(CX,55);g.append(lbl_note)
     return g
 tuner_group=_build_tuner_group();del _build_tuner_group;gc.collect()
-tuner_muted=False
-TUNER_FREQ=440
-TUNER_ON_S=4.0   # tone on duration
-TUNER_OFF_S=2.0  # silence between pulses
-tuner_tone_on=False;tuner_next_t=0.0
+# Guitar standard tuning +2 octaves for transducer clarity: (display label, frequency Hz)
+TUNER_NOTES=(("E4",329.63),("A4",440.00),("D5",587.33),("G5",783.99),("B5",987.77),("E6",1318.51))
+TUNER_ON_S=3.0    # ring-out duration after strike
+tuner_note_idx=0
+tuner_playing=False  # True=ringing out, False=stopped/silent
+tuner_next_t=0.0
 display_dimmed=False
 bat_charging=False;bat_percent=0  # unknown until first battery read
 last_batt_check=0.0
-lbl_tuner_mute=label.Label(terminalio.FONT,text="LIVE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
+lbl_tuner_mute=label.Label(terminalio.FONT,text="STRIKE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 tuner_group.append(lbl_tuner_mute);gc.collect()
 lbl_bat_clock=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,197))
 lbl_bat_metro=label.Label(terminalio.FONT,text="BAT",scale=1,color=BAT_GREEN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,205))
@@ -221,13 +222,16 @@ def update_bat_labels():
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
 def enter_clock():
-    global tuner_tone_on;buzzer.duty_cycle=0;tuner_tone_on=False
+    buzzer.duty_cycle=0
     t=time.localtime();redraw_hands(t.tm_hour,t.tm_min,t.tm_sec)
     display.root_group=clock_group;display.refresh()
 def enter_metro():
-    global tuner_tone_on;buzzer.duty_cycle=0;tuner_tone_on=False
+    buzzer.duty_cycle=0
     shared_bitmap.fill(0);display.root_group=metro_group;display.refresh()
 def enter_tuner():
+    global tuner_playing,tuner_next_t
+    buzzer.duty_cycle=0;tuner_playing=False
+    lbl_tuner_mute.text="STRIKE"
     display.root_group=tuner_group;display.refresh()
 def advance_mode():
     global mode,beat_start,last_beat_t,beat_count,step,btn_a2_prev,btn_boot_prev,metro_beat_pos
@@ -359,35 +363,36 @@ while True:
             if beat_count%8==0:gc.collect()
     elif mode==MODE_TUNER:
         now=time.monotonic()
-        if not tuner_muted:
-            if now>=tuner_next_t:
-                if tuner_tone_on:
-                    buzzer.duty_cycle=0;tuner_tone_on=False
-                    tuner_next_t=now+TUNER_OFF_S
-                else:
-                    buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
-                    tuner_tone_on=True;tuner_next_t=now+TUNER_ON_S
-        else:
-            if tuner_tone_on:
-                buzzer.duty_cycle=0;tuner_tone_on=False
+        # Auto ring-out end
+        if tuner_playing and now>=tuner_next_t:
+            buzzer.duty_cycle=0;tuner_playing=False
+            lbl_tuner_mute.text="STRIKE";display.refresh()
+        # A2 — cycle note (only when stopped)
         a2_now=btn_a2.value
         if btn_a2_prev and not a2_now:
             if is_waking():register_interaction();a2_now=btn_a2.value
+            elif not both_held() and not tuner_playing:
+                wait_release(btn_a2);a2_now=btn_a2.value
+                tuner_note_idx=(tuner_note_idx+1)%len(TUNER_NOTES)
+                name,freq=TUNER_NOTES[tuner_note_idx]
+                lbl_note.text="{:s} {:4d}Hz".format(name,int(freq))
+                register_interaction();display.refresh()
         btn_a2_prev=a2_now
+        # BOOT — strike (when stopped) or stop (when playing)
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
             if is_waking():register_interaction();boot_now=btn_boot.value
             elif not both_held():
-                wait_release(btn_boot)
-                boot_now=btn_boot.value
-                tuner_muted=not tuner_muted
-                lbl_tuner_mute.text="MUTE" if tuner_muted else "LIVE"
-                display.refresh()
+                wait_release(btn_boot);boot_now=btn_boot.value
                 register_interaction()
-                if not tuner_muted:
-                    buzzer.frequency=TUNER_FREQ;buzzer.duty_cycle=BUZZER_DUTY
-                    tuner_tone_on=True;tuner_next_t=time.monotonic()+TUNER_ON_S
+                if tuner_playing:
+                    buzzer.duty_cycle=0;tuner_playing=False
+                    lbl_tuner_mute.text="STRIKE"
                 else:
-                    buzzer.duty_cycle=0;tuner_tone_on=False
+                    name,freq=TUNER_NOTES[tuner_note_idx]
+                    buzzer.frequency=int(freq);buzzer.duty_cycle=BUZZER_DUTY
+                    tuner_playing=True;tuner_next_t=time.monotonic()+TUNER_ON_S
+                    lbl_tuner_mute.text="STOP"
+                display.refresh()
         btn_boot_prev=boot_now
         time.sleep(0.02)
