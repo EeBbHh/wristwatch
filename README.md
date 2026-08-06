@@ -96,8 +96,8 @@ Prototype 5b board screenshots. Pre and post solder.
 
 ![ScreenShot](pbV5bsolderF.jpg)
 
-![ScreenShot](pbdV5bsolderB.jpg)
+![ScreenShot](pbV5bsolderB.jpg)
 
 ![ScreenShot](pbV5bdocked.jpg)
 
-![ScreenShot](pbdV5btest.jpg)
+![ScreenShot](pbV5btest.jpg)
