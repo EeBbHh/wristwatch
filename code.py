@@ -32,7 +32,8 @@ MOTOR_STRENGTH=49151  # 75% — adjust 0-65535 to set vibration strength
 buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
 buzzer.frequency=440
 BUZZER_DUTY=32768
-BOTH_HOLD_S=0.5
+BOTH_HOLD_S=0.3
+LONG_PRESS_S=0.8  # long-press threshold for individual buttons
 CX=120;CY=120  # CY used by sprites.py only
 clock_rtc=rtc.RTC()
 clock_rtc.datetime=time.struct_time((2025,1,1,12,0,0,0,-1,-1))
@@ -313,7 +314,7 @@ while True:
                 a2_press_t=time.monotonic()
                 while not btn_a2.value:
                     if both_held():break
-                    if time.monotonic()-a2_press_t>=BOTH_HOLD_S*2:
+                    if time.monotonic()-a2_press_t>=LONG_PRESS_S:
                         metro_ts_idx=(metro_ts_idx+1)%len(TIME_SIGS)
                         lbl_timesig.text=TIME_SIGS[metro_ts_idx];metro_beat_pos=0
                         step=FADE_STEPS
@@ -333,7 +334,7 @@ while True:
                 boot_press_t=time.monotonic()
                 while not btn_boot.value:
                     if both_held():break
-                    if time.monotonic()-boot_press_t>=BOTH_HOLD_S*2:
+                    if time.monotonic()-boot_press_t>=LONG_PRESS_S:
                         metro_silent=not metro_silent
                         lbl_audio_mode.text="SILENT" if metro_silent else "SOUND"
                         wait_release(btn_boot);boot_now=btn_boot.value
@@ -363,7 +364,7 @@ while True:
             if beat_count%8==0:gc.collect()
     elif mode==MODE_TUNER:
         now=time.monotonic()
-        # Auto ring-out end
+        # Ring-out end
         if tuner_playing and now>=tuner_next_t:
             buzzer.duty_cycle=0;tuner_playing=False
             lbl_tuner_mute.text="STRIKE";display.refresh()
@@ -372,27 +373,35 @@ while True:
         if btn_a2_prev and not a2_now:
             if is_waking():register_interaction();a2_now=btn_a2.value
             elif not both_held() and not tuner_playing:
-                wait_release(btn_a2);a2_now=btn_a2.value
-                tuner_note_idx=(tuner_note_idx+1)%len(TUNER_NOTES)
-                name,freq=TUNER_NOTES[tuner_note_idx]
-                lbl_note.text="{:s} {:4d}Hz".format(name,int(freq))
-                register_interaction();display.refresh()
+                while not btn_a2.value:
+                    if both_held():break
+                    time.sleep(0.02)
+                else:
+                    tuner_note_idx=(tuner_note_idx+1)%len(TUNER_NOTES)
+                    name,freq=TUNER_NOTES[tuner_note_idx]
+                    lbl_note.text="{:s} {:4d}Hz".format(name,int(freq))
+                    register_interaction();display.refresh()
+                a2_now=btn_a2.value
         btn_a2_prev=a2_now
         # BOOT — strike (when stopped) or stop (when playing)
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
             if is_waking():register_interaction();boot_now=btn_boot.value
             elif not both_held():
-                wait_release(btn_boot);boot_now=btn_boot.value
-                register_interaction()
-                if tuner_playing:
-                    buzzer.duty_cycle=0;tuner_playing=False
-                    lbl_tuner_mute.text="STRIKE"
+                while not btn_boot.value:
+                    if both_held():break
+                    time.sleep(0.02)
                 else:
-                    name,freq=TUNER_NOTES[tuner_note_idx]
-                    buzzer.frequency=int(freq);buzzer.duty_cycle=BUZZER_DUTY
-                    tuner_playing=True;tuner_next_t=time.monotonic()+TUNER_ON_S
-                    lbl_tuner_mute.text="STOP"
-                display.refresh()
+                    register_interaction()
+                    if tuner_playing:
+                        buzzer.duty_cycle=0;tuner_playing=False
+                        lbl_tuner_mute.text="STRIKE"
+                    else:
+                        name,freq=TUNER_NOTES[tuner_note_idx]
+                        buzzer.frequency=int(freq);buzzer.duty_cycle=BUZZER_DUTY
+                        tuner_playing=True;tuner_next_t=now+TUNER_ON_S
+                        lbl_tuner_mute.text="STOP"
+                    display.refresh()
+                boot_now=btn_boot.value
         btn_boot_prev=boot_now
         time.sleep(0.02)
