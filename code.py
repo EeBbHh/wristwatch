@@ -149,24 +149,35 @@ metro_group.append(lbl_timesig)
 gc.collect()
 p_cyan=displayio.Palette(1);p_cyan[0]=COLOR_CYAN
 def _build_tuner_group():
+    global lbl_note,p_flash,p_fork
     g=displayio.Group()
     g.append(vectorio.Circle(pixel_shader=p_black,radius=120,x=CX,y=CY))
     tt=CY-40;bt=CY+16;bh=6;ht=bt+bh;hb=ht+26
-    g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-8,y=tt,width=4,height=bt-tt))
-    g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX+4,y=tt,width=4,height=bt-tt))
-    g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-8,y=bt,width=16,height=bh))
-    g.append(vectorio.Rectangle(pixel_shader=p_cyan,x=CX-3,y=ht,width=6,height=hb-ht))
-    global lbl_note
-    lbl_note=Label(terminalio.FONT,text="E4  330Hz",color=COLOR_PINK_PURPLE,scale=2)
+    p_fork=displayio.Palette(1);p_fork[0]=COLOR_PINK_PURPLE
+    g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX-8,y=tt,width=4,height=bt-tt))
+    g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX+4,y=tt,width=4,height=bt-tt))
+    g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX-8,y=bt,width=16,height=bh))
+    g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX-3,y=ht,width=6,height=hb-ht))
+    # Strike flash lines — 3 each side, shared palette starts black (hidden)
+    p_flash=displayio.Palette(1);p_flash[0]=0x000000
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX-26,y=CY-22,width=16,height=3))
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX-34,y=CY-9,width=22,height=3))
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX-26,y=CY+4,width=16,height=3))
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX+10,y=CY-22,width=16,height=3))
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX+12,y=CY-9,width=22,height=3))
+    g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX+10,y=CY+4,width=16,height=3))
+    lbl_note=Label(terminalio.FONT,text="E4  329Hz",color=COLOR_PINK_PURPLE,scale=2)
     lbl_note.anchor_point=(0.5,0.5);lbl_note.anchored_position=(CX,55);g.append(lbl_note)
     return g
 tuner_group=_build_tuner_group();del _build_tuner_group;gc.collect()
 # Guitar standard tuning +2 octaves for transducer clarity: (display label, frequency Hz)
 TUNER_NOTES=(("E4",329.63),("A4",440.00),("D5",587.33),("G5",783.99),("B5",987.77),("E6",1318.51))
 TUNER_ON_S=3.0    # ring-out duration after strike
+TUNER_FLASH_S=0.4  # strike flash duration in seconds
 tuner_note_idx=0
 tuner_playing=False  # True=ringing out, False=stopped/silent
 tuner_next_t=0.0
+tuner_strike_t=0.0  # time of last strike for flash animation
 display_dimmed=False
 bat_charging=False;bat_percent=0  # unknown until first battery read
 last_batt_check=0.0
@@ -230,9 +241,9 @@ def enter_metro():
     buzzer.duty_cycle=0
     shared_bitmap.fill(0);display.root_group=metro_group;display.refresh()
 def enter_tuner():
-    global tuner_playing,tuner_next_t
-    buzzer.duty_cycle=0;tuner_playing=False
-    lbl_tuner_mute.text="STRIKE"
+    global tuner_playing,tuner_next_t,tuner_strike_t
+    buzzer.duty_cycle=0;tuner_playing=False;tuner_strike_t=0.0
+    p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;lbl_tuner_mute.text="STRIKE"
     display.root_group=tuner_group;display.refresh()
 def advance_mode():
     global mode,beat_start,last_beat_t,beat_count,step,btn_a2_prev,btn_boot_prev,metro_beat_pos
@@ -368,6 +379,9 @@ while True:
         if tuner_playing and now>=tuner_next_t:
             buzzer.duty_cycle=0;tuner_playing=False
             lbl_tuner_mute.text="STRIKE";display.refresh()
+        # Flash end — hide strike lines
+        if tuner_strike_t>0.0 and now-tuner_strike_t>=TUNER_FLASH_S:
+            p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;tuner_strike_t=0.0;display.refresh()
         # A2 — cycle note (only when stopped)
         a2_now=btn_a2.value
         if btn_a2_prev and not a2_now:
@@ -395,12 +409,14 @@ while True:
                     register_interaction()
                     if tuner_playing:
                         buzzer.duty_cycle=0;tuner_playing=False
+                        p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;tuner_strike_t=0.0
                         lbl_tuner_mute.text="STRIKE"
                     else:
                         name,freq=TUNER_NOTES[tuner_note_idx]
                         buzzer.frequency=int(freq);buzzer.duty_cycle=BUZZER_DUTY
                         tuner_playing=True;tuner_next_t=now+TUNER_ON_S
-                        lbl_tuner_mute.text="STOP"
+                        tuner_strike_t=now;p_flash[0]=0xFFFFFF;p_fork[0]=0xFFFFFF
+                        lbl_tuner_mute.text="STOP";display.refresh()
                     display.refresh()
                 boot_now=btn_boot.value
         btn_boot_prev=boot_now
