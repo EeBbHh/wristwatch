@@ -128,11 +128,13 @@ def build_metro_palette(colour,fade_steps):
 lbl_bpm=label.Label(terminalio.FONT,text="BPM",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(1.0,0.5),anchored_position=(CX-45,CY))
 lbl_num=label.Label(terminalio.FONT,text="80",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(0.0,0.5),anchored_position=(CX+45,CY))
 gc.collect()
+import neopixel;np=neopixel.NeoPixel(board.NEOPIXEL,1,brightness=0.1,auto_write=False);np[0]=(0,0,0);np.show()
 import sprites as _spr;gc.collect()
 SPRITE=_spr.build_sprites();del _spr;gc.collect()
 def apply_bpm(bpm):
+    global metro_colour
     colour,note=bpm_range(bpm);cycle=60.0/bpm;fsteps=max(1,int(cycle/REFRESH_FLOOR))
-    build_metro_palette(colour,fsteps)
+    metro_colour=colour;build_metro_palette(colour,fsteps)
     lbl_num.text=str(bpm);lbl_num.color=colour;lbl_bpm.color=colour
     return cycle,fsteps,SPRITE[note]
 def apply_sprite(buf,colour_idx):
@@ -234,7 +236,7 @@ def update_bat_labels():
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
 def enter_clock():
-    buzzer.duty_cycle=0
+    np[0]=(0,0,0);np.show();buzzer.duty_cycle=0
     t=time.localtime();redraw_hands(t.tm_hour,t.tm_min,t.tm_sec)
     display.root_group=clock_group;display.refresh()
 def enter_metro():
@@ -242,6 +244,7 @@ def enter_metro():
     shared_bitmap.fill(0);display.root_group=metro_group;display.refresh()
 def enter_tuner():
     global tuner_playing,tuner_next_t,tuner_strike_t
+    np[0]=(0,0,0);np.show()
     buzzer.duty_cycle=0;tuner_playing=False;tuner_strike_t=0.0
     p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;lbl_tuner_mute.text="STRIKE"
     display.root_group=tuner_group;display.refresh()
@@ -366,10 +369,13 @@ while True:
         if step<0:
             step=FADE_STEPS;beat_start+=cycle_s;beat_count+=1
             is_downbeat=(metro_beat_pos==0)
+            r=(metro_colour>>16)&0xFF;g=(metro_colour>>8)&0xFF;b=metro_colour&0xFF
+            np[0]=(r,g,b);np.show()
             if not metro_silent:
                 tone(880 if is_downbeat else 660,60)
             else:
                 vibrate(80 if is_downbeat else 50)
+            np[0]=(0,0,0);np.show()
             metro_beat_pos=(metro_beat_pos+1)%TIME_SIG_BEATS[metro_ts_idx]
             now=time.monotonic();actual_interval=now-last_beat_t;last_beat_t=now
             if beat_count%8==0:gc.collect()
