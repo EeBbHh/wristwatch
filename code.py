@@ -363,7 +363,7 @@ while True:
             else:
                 vibrate(80 if is_downbeat else 50)
             metro_beat_pos=(metro_beat_pos+1)%TIME_SIG_BEATS[metro_ts_idx]
-            now=time.monotonic();actual_interval=now-last_beat_t;last_beat_t=now
+            now=time.monotonic();last_beat_t=now
             if beat_count%8==0:gc.collect()
     elif mode==MODE_TUNER:
         now=time.monotonic()
@@ -404,7 +404,7 @@ while True:
                         buzzer.frequency=int(freq);buzzer.duty_cycle=BUZZER_DUTY
                         tuner_playing=True;tuner_next_t=now+TUNER_ON_S
                         tuner_strike_t=now;p_flash[0]=0xFFFFFF;p_fork[0]=0xFFFFFF
-                        lbl_tuner_mute.text="STOP";display.refresh()
+                        lbl_tuner_mute.text="STOP"
                     display.refresh()
                 boot_now=btn_boot.value
         btn_boot_prev=boot_now
