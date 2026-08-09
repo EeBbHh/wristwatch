@@ -1,9 +1,3 @@
-# Clock+Metro+Tuner | QT Py RP2040 (#4900) EYESPI BFF (#5772)
-# GC9A01A 240x240 LCD (#6178) Charger BFF (#5397) 400mAh LiPo (#3898)
-# Both held 0.5s: Clock->Metro->Tuner->Clock
-# Clock: BOOT=enter/next field  A2=increment  (BOOT wired to SDA pad)
-# Metro: A2 short=BPM+  A2 long=timesig  BOOT short=BPM-  BOOT long=sound/silent
-# Tuner: BOOT=strike/stop  A2=cycle note (E2 A2 D3 G3 B3 E4)
 import gc
 gc.collect()
 import board,busio,displayio,fourwire,adafruit_gc9a01a
@@ -14,10 +8,11 @@ from adafruit_display_text import label
 gc.collect()
 displayio.release_displays()
 gc.collect()
-shared_bitmap=displayio.Bitmap(240,240,24)  # 24 = NUM_COLOURS at BPM_MIN=40, REFRESH_FLOOR=0.065
+shared_bitmap=displayio.Bitmap(240,240,24)
 shared_bitmap.fill(0)
 import pwmio
 backlight=pwmio.PWMOut(board.A0,frequency=1000,duty_cycle=65535)
+gc.collect()
 spi=busio.SPI(clock=board.SCK,MOSI=board.MOSI)
 display_bus=fourwire.FourWire(spi,command=board.RX,chip_select=board.TX,reset=None,baudrate=24_000_000)
 display=adafruit_gc9a01a.GC9A01A(display_bus,width=240,height=240,rotation=0,auto_refresh=False)
@@ -28,13 +23,13 @@ btn_boot=digitalio.DigitalInOut(board.SDA)
 btn_boot.direction=digitalio.Direction.INPUT
 btn_boot.pull=digitalio.Pull.UP
 motor=pwmio.PWMOut(board.A1,frequency=1000,duty_cycle=0)
-MOTOR_STRENGTH=49151  # 75% — adjust 0-65535 to set vibration strength
+MOTOR_STRENGTH=49151
 buzzer=pwmio.PWMOut(board.A3,variable_frequency=True)
 buzzer.frequency=440
 BUZZER_DUTY=32768
 BOTH_HOLD_S=0.3
-LONG_PRESS_S=0.8  # long-press threshold for individual buttons
-CX=120;CY=120  # CY used by sprites.py only
+LONG_PRESS_S=0.8
+CX=120;CY=120
 clock_rtc=rtc.RTC()
 clock_rtc.datetime=time.struct_time((2025,1,1,12,0,0,0,-1,-1))
 BPM_START=80;BPM_MIN=40;BPM_MAX=250;BPM_STEP=5
@@ -128,13 +123,11 @@ def build_metro_palette(colour,fade_steps):
 lbl_bpm=label.Label(terminalio.FONT,text="BPM",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(1.0,0.5),anchored_position=(CX-45,CY))
 lbl_num=label.Label(terminalio.FONT,text="80",scale=3,color=COLOR_WHITE,background_color=0x000000,anchor_point=(0.0,0.5),anchored_position=(CX+45,CY))
 gc.collect()
-import neopixel;np=neopixel.NeoPixel(board.NEOPIXEL,1,brightness=0.1,auto_write=False);np[0]=(0,0,0);np.show()
 import sprites as _spr;gc.collect()
 SPRITE=_spr.build_sprites();del _spr;gc.collect()
 def apply_bpm(bpm):
-    global metro_colour
     colour,note=bpm_range(bpm);cycle=60.0/bpm;fsteps=max(1,int(cycle/REFRESH_FLOOR))
-    metro_colour=colour;build_metro_palette(colour,fsteps)
+    build_metro_palette(colour,fsteps)
     lbl_num.text=str(bpm);lbl_num.color=colour;lbl_bpm.color=colour
     return cycle,fsteps,SPRITE[note]
 def apply_sprite(buf,colour_idx):
@@ -149,7 +142,6 @@ metro_ts_idx=0;metro_beat_pos=0
 lbl_timesig=label.Label(terminalio.FONT,text="4/4",scale=1,color=COLOR_CYAN,background_color=0x000000,anchor_point=(0.5,0.5),anchored_position=(CX,50))
 metro_group.append(lbl_timesig)
 gc.collect()
-p_cyan=displayio.Palette(1);p_cyan[0]=COLOR_CYAN
 def _build_tuner_group():
     global lbl_note,p_flash,p_fork
     g=displayio.Group()
@@ -160,7 +152,6 @@ def _build_tuner_group():
     g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX+4,y=tt,width=4,height=bt-tt))
     g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX-8,y=bt,width=16,height=bh))
     g.append(vectorio.Rectangle(pixel_shader=p_fork,x=CX-3,y=ht,width=6,height=hb-ht))
-    # Strike flash lines — 3 each side, shared palette starts black (hidden)
     p_flash=displayio.Palette(1);p_flash[0]=0x000000
     g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX-26,y=CY-22,width=16,height=3))
     g.append(vectorio.Rectangle(pixel_shader=p_flash,x=CX-34,y=CY-9,width=22,height=3))
@@ -172,16 +163,15 @@ def _build_tuner_group():
     lbl_note.anchor_point=(0.5,0.5);lbl_note.anchored_position=(CX,55);g.append(lbl_note)
     return g
 tuner_group=_build_tuner_group();del _build_tuner_group;gc.collect()
-# Guitar standard tuning +2 octaves for transducer clarity: (display label, frequency Hz)
 TUNER_NOTES=(("E4",329.63),("A4",440.00),("D5",587.33),("G5",783.99),("B5",987.77),("E6",1318.51))
-TUNER_ON_S=3.0    # ring-out duration after strike
-TUNER_FLASH_S=0.4  # strike flash duration in seconds
+TUNER_ON_S=3.0
+TUNER_FLASH_S=0.4
 tuner_note_idx=0
-tuner_playing=False  # True=ringing out, False=stopped/silent
+tuner_playing=False
 tuner_next_t=0.0
-tuner_strike_t=0.0  # time of last strike for flash animation
+tuner_strike_t=0.0
 display_dimmed=False
-bat_charging=False;bat_percent=0  # unknown until first battery read
+bat_charging=False;bat_percent=0
 last_batt_check=0.0
 lbl_tuner_mute=label.Label(terminalio.FONT,text="STRIKE",scale=1,color=COLOR_CYAN,anchor_point=(0.5,0.5),anchored_position=(CX,185))
 tuner_group.append(lbl_tuner_mute);gc.collect()
@@ -236,7 +226,7 @@ def update_bat_labels():
 MODE_CLOCK=0;MODE_METRO=1;MODE_TUNER=2;NUM_MODES=3
 mode=MODE_CLOCK
 def enter_clock():
-    np[0]=(0,0,0);np.show();buzzer.duty_cycle=0
+    buzzer.duty_cycle=0
     t=time.localtime();redraw_hands(t.tm_hour,t.tm_min,t.tm_sec)
     display.root_group=clock_group;display.refresh()
 def enter_metro():
@@ -244,7 +234,6 @@ def enter_metro():
     shared_bitmap.fill(0);display.root_group=metro_group;display.refresh()
 def enter_tuner():
     global tuner_playing,tuner_next_t,tuner_strike_t
-    np[0]=(0,0,0);np.show()
     buzzer.duty_cycle=0;tuner_playing=False;tuner_strike_t=0.0
     p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;lbl_tuner_mute.text="STRIKE"
     display.root_group=tuner_group;display.refresh()
@@ -369,26 +358,20 @@ while True:
         if step<0:
             step=FADE_STEPS;beat_start+=cycle_s;beat_count+=1
             is_downbeat=(metro_beat_pos==0)
-            r=(metro_colour>>16)&0xFF;g=(metro_colour>>8)&0xFF;b=metro_colour&0xFF
-            np[0]=(r,g,b);np.show()
             if not metro_silent:
                 tone(880 if is_downbeat else 660,60)
             else:
                 vibrate(80 if is_downbeat else 50)
-            np[0]=(0,0,0);np.show()
             metro_beat_pos=(metro_beat_pos+1)%TIME_SIG_BEATS[metro_ts_idx]
             now=time.monotonic();actual_interval=now-last_beat_t;last_beat_t=now
             if beat_count%8==0:gc.collect()
     elif mode==MODE_TUNER:
         now=time.monotonic()
-        # Ring-out end
         if tuner_playing and now>=tuner_next_t:
             buzzer.duty_cycle=0;tuner_playing=False
             lbl_tuner_mute.text="STRIKE";display.refresh()
-        # Flash end — hide strike lines
         if tuner_strike_t>0.0 and now-tuner_strike_t>=TUNER_FLASH_S:
             p_flash[0]=0x000000;p_fork[0]=COLOR_PINK_PURPLE;tuner_strike_t=0.0;display.refresh()
-        # A2 — cycle note (only when stopped)
         a2_now=btn_a2.value
         if btn_a2_prev and not a2_now:
             if is_waking():register_interaction();a2_now=btn_a2.value
@@ -403,7 +386,6 @@ while True:
                     register_interaction();display.refresh()
                 a2_now=btn_a2.value
         btn_a2_prev=a2_now
-        # BOOT — strike (when stopped) or stop (when playing)
         boot_now=btn_boot.value
         if btn_boot_prev and not boot_now:
             if is_waking():register_interaction();boot_now=btn_boot.value
