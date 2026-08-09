@@ -23,16 +23,16 @@ Replaced adafruit display with new 1.28 and 1.09 displays. Carrier PCB from adaf
 
 QTpy dock complete.
 
-Reorg PCB around case design. 
+Reorg PCB around case design. Needs more work
 
-Check memory headrom.
+Check memory headrom. Complete
 
-Make sure documentation is up to date.
+Make sure documentation is up to date. Complete
 
-Maybe use neopixel to flash with metronome.
+Maybe use neopixel to flash with metronome. Not using
 
-Revisit string tunings feature.
+Revisit string tunings feature. Complete
 
-Case design and fabrication.
+Case design and fabrication. To do.
 
 Testing testing testing.
