@@ -28,7 +28,7 @@ Prototype 4 hardware: Prototype board updated. New 1.28 Display https://www.buyd
 
 Prototype 5 hardware: Circuit for display reset added. Circuit for backlight added. QTpy dock adjusted from 17.5mm to 18mm.
 
-Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Prototype board version 5 sits at 25mm. Goal is to get as close to 13(smartwatch height) as possible.
+Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Prototype board version 5 sits at 25mm. Goal is to get closer to 13(smartwatch height).
 
 ![ScreenShot](watch.jpg)
 
