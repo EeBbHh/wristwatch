@@ -100,8 +100,10 @@ Prototype 5b board screenshots. Pre and post solder.
 
 ![ScreenShot](pbV5bdocked.jpg)
 
-![ScreenShot](pbV6a.jpg)
+![ScreenShot](pbV5btest.jpg)
 
 Prototype 6a board screenshots. Pre and post solder.
 
-![ScreenShot](pbV5btest.jpg)
+![ScreenShot](pbV6a.jpg)
+
+
