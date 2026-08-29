@@ -30,6 +30,8 @@ Prototype 5 hardware: Circuit for display reset added. Circuit for backlight add
 
 Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Prototype board version 5 sits at 25mm. Goal is to get closer to 13(smartwatch height).
 
+Prototype 7 hardware: TBD
+
 ![ScreenShot](watch.jpg)
 
 ![ScreenShot](metronome.jpg)
