@@ -108,4 +108,8 @@ Prototype 6a board screenshots. Pre and post solder.
 
 ![ScreenShot](pbV6a.jpg)
 
+![ScreenShot](pbV6solderF.jpg)
+
+![ScreenShot](pbV6solderB.jpg)
+
 
