@@ -32,6 +32,10 @@ Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of th
 
 Prototype 7 hardware: TBD
 
+![ScreenShot](prototype1.jpg)
+
+![ScreenShot](prototype2.jpg)
+
 ![ScreenShot](watch.jpg)
 
 ![ScreenShot](metronome.jpg)
