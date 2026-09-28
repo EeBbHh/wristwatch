@@ -16,6 +16,8 @@ NOTE: Add the following to the requirements folder: adafruit_bus_device folder, 
 
 Microcontroller: QTpy RP2040 https://www.adafruit.com/product/4900
 
+Special thanks to these two projects that got me started on this journey. https://projecthub.arduino.cc/petbump10/arduino-tick-tock-metronome-a49188 and https://github.com/FoamyGuy/Adafruit_CircuitPython_Display_AnalogClock
+
 Prototype 1, 2 and 3 Display: 1.28" Round TFT https://www.adafruit.com/product/6178 
 
 Prototype 1 hardware: EYESPI BFF https://www.adafruit.com/product/5772, IoT Button BFF https://www.adafruit.com/product/5666, Vibration Mini Motor https://www.adafruit.com/product/1201, Piezo Buzzer https://www.adafruit.com/product/1740, LIPO Charger BFF https://www.adafruit.com/product/5397, 400mAh LIPO Battery https://www.adafruit.com/product/3898
