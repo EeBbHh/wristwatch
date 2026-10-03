@@ -28,9 +28,9 @@ Prototype 3 hardware: EYESPI BFF removed. Prototype board updated. SMD FPC added
 
 Prototype 4 hardware: Prototype board updated. New 1.28 Display https://www.buydisplay.com/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch, SMD FPC updated. QTpy dock added. Futher refinement is underway as I put protoboardV4 through testing.
 
-Prototype 5 hardware: Circuit for display reset added. Circuit for backlight added. QTpy dock adjusted from 17.5mm to 18mm.
+Prototype 5 hardware: Circuit for display reset added. Circuit for backlight added. QTpy dock adjusted from 17.5mm to 18mm. Prototype board version 5 sits at 25mm. 
 
-Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Prototype board version 5 sits at 25mm. Side actuated buttons replaced top actuated buttons. Goal is to get closer to 13(smartwatch height). Final iteration for 6 will have the female headers removed and vibration motor moved out of the way for soldering the QTpy closer to the board.
+Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Side actuated buttons replaced top actuated buttons but might try other types.  Final iteration for 6 will have the female headers removed and vibration motor moved out of the way for soldering the QTpy closer to the board. Prototype board version 6 sits at 11.30mm. Goal is to get closer to 13 with case.
 
 Prototype 7 hardware: TBD
 
@@ -131,3 +131,7 @@ Prototype 6b board screenshots. Pre and post solder.
 Prototype 6c board screenshots. Pre and post solder.
 
 ![ScreenShot](pbV6c.jpg)
+
+![ScreenShot](pbV6csolderF.jpg)
+
+![ScreenShot](pbV6csolderB.jpg)
