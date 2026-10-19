@@ -141,3 +141,7 @@ Prototype 6c board screenshots. Pre and post solder.
 Prototype 6d board screenshots. Pre and post solder.
 
 ![ScreenShot](SMDv6d.jpg)
+
+![ScreenShot](SMDv6dF.jpg)
+
+![ScreenShot](SMDv6dB.jpg)
