@@ -145,3 +145,7 @@ Prototype 6d board screenshots. Pre and post solder.
 ![ScreenShot](SMDv6dF.jpg)
 
 ![ScreenShot](SMDv6dB.jpg)
+
+![ScreenShot](SMDv6ds1.jpg)
+
+![ScreenShot](SMDv6ds2.jpg)
