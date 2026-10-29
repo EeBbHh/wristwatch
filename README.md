@@ -30,9 +30,9 @@ Prototype 4 hardware: Prototype board updated. New 1.28 Display https://www.buyd
 
 Prototype 5 hardware: Circuit for display reset added. Circuit for backlight added. QTpy dock adjusted from 17.5mm to 18mm. Prototype board version 5 sits at 25mm. 
 
-Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Side actuated buttons replaced top actuated buttons but might try other types.  Final iteration for 6 will have the female headers removed and vibration motor moved out of the way for soldering the QTpy closer to the board. Prototype board version 6 sits at 11.30mm. Goal is to get closer to 13 with case.
+Prototype 6 hardware: Lipo BFF circuitry absorbed to further reduce height of the stack. Final iteration for 6 will have the female headers removed and vibration motor moved out of the way for soldering the QTpy closer to the board. Prototype board version 6 sits at 11.30mm. Goal is to get closer to 13 with case.
 
-Prototype 7 hardware: TBD
+Prototype 7 hardware: Side actuated buttons replaced top actuated buttons. Test pads replaced through hole connectors for battery.
 
 ![ScreenShot](prototype1.jpg)
 
